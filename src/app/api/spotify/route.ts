@@ -21,6 +21,9 @@ async function getAccessToken() {
       refresh_token: REFRESH_TOKEN!,
     }),
   });
+  if (!response.ok) {
+    throw new Error(`Token refresh failed: ${response.status}`);
+  }
   return response.json();
 }
 
@@ -38,7 +41,6 @@ export async function GET() {
 
     const response = await fetch(NOW_PLAYING_URL, {
       headers: { Authorization: `Bearer ${access_token}` },
-      next: { revalidate: 30 },
     });
 
     if (response.status === 204 || response.status > 400) {

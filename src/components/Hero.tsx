@@ -147,25 +147,29 @@ export function Hero() {
 
         {/* Name typography */}
         <div className="text-center">
+          <h1 className="sr-only">Yash Singh</h1>
+
           {/* YASH */}
           <div
             ref={line1Ref}
             className="overflow-hidden"
             style={{ perspective: "800px" }}
+            aria-hidden="true"
           >
-            <h1 className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter">
+            <span className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter block">
               {"YASH".split("").map((char, i) => (
                 <span key={i} className="hero-letter inline-block">
                   {char}
                 </span>
               ))}
-            </h1>
+            </span>
           </div>
 
           {/* Animated keyword marquee between lines */}
           <div
             ref={marqueeRef}
             className="relative flex items-center gap-4 my-3 md:my-4 origin-left"
+            aria-hidden="true"
           >
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
             <div className="overflow-hidden max-w-xs md:max-w-md">
@@ -188,14 +192,15 @@ export function Hero() {
             ref={line2Ref}
             className="overflow-hidden"
             style={{ perspective: "800px" }}
+            aria-hidden="true"
           >
-            <h1 className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter">
+            <span className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter block">
               {"SINGH".split("").map((char, i) => (
                 <span key={i} className="hero-letter inline-block">
                   {char}
                 </span>
               ))}
-            </h1>
+            </span>
           </div>
         </div>
 

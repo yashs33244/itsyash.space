@@ -134,6 +134,7 @@ export function Projects() {
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`View ${project.title} on GitHub`}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       className="p-2 rounded-xl border border-border hover:border-cyan/20 text-text-muted hover:text-cyan transition-all flex-shrink-0"
                     >

@@ -63,7 +63,7 @@ export function Photography() {
   );
 
   return (
-    <section ref={sectionRef} className="section-spacing">
+    <section id="photography" ref={sectionRef} className="section-spacing">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-14">

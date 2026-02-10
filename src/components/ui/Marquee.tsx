@@ -34,7 +34,9 @@ export function Marquee({
         style={{ "--duration": `${duration}s` } as React.CSSProperties}
       >
         {children}
-        {children}
+        <div aria-hidden="true" className="flex shrink-0 gap-3">
+          {children}
+        </div>
       </div>
     </div>
   );

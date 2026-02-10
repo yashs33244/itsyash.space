@@ -22,6 +22,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://itsyash.space"),
   title: "Yash Singh — Systems Engineer",
   description:
     "Systems engineer building production infrastructure, LLM pipelines, and real-time applications at scale. SDE Intern at Binocs, Bangalore.",
@@ -55,6 +56,9 @@ export const metadata: Metadata = {
       "Building production systems that scale. SDE Intern at Binocs, Bangalore.",
   },
   robots: { index: true, follow: true },
+  other: {
+    "theme-color": "#050508",
+  },
 };
 
 export default function RootLayout({

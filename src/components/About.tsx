@@ -13,8 +13,7 @@ import { SpotifyNowPlaying } from "./SpotifyNowPlaying";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PROFILE_IMAGE =
-  "https://media.licdn.com/dms/image/v2/D5603AQEe20gHjDIjFg/profile-displayphoto-crop_800_800/B56ZvVz.MpIQAI-/0/1768818731662?e=1772064000&v=beta&t=N9Lkuw9SjBbTQVFpS-KxuujT4bz66DTFRenUbNMm_4s";
+const PROFILE_IMAGE = "/images/yash-profile.png";
 
 const terminalLines = [
   '$ cat ~/.config/yash.toml',
