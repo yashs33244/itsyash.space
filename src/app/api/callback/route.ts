@@ -1,10 +1,6 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || "";
-const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || "";
-const REDIRECT_URI =
-  process.env.SPOTIFY_REDIRECT_URI ||
-  "https://itsyash-space.vercel.app/api/callback";
+export const dynamic = "force-dynamic";
 
 function escapeHtml(str: string): string {
   return str
@@ -15,97 +11,92 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#039;");
 }
 
-function page(title: string, body: string) {
-  return new Response(
-    `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
-    <body style="background:#050508;color:#f0f0f0;font-family:monospace;padding:40px;max-width:600px;">
-      ${body}
-    </body></html>`,
-    { headers: { "Content-Type": "text/html" } }
-  );
-}
-
 export async function GET(request: NextRequest) {
-  const code = request.nextUrl.searchParams.get("code");
-  const error = request.nextUrl.searchParams.get("error");
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get("code");
+  const error = searchParams.get("error");
 
   if (error) {
-    return page(
-      "Authorization Failed",
-      `<h1 style="color:#ff4444;">Authorization Failed</h1>
-       <p>Error: ${escapeHtml(error)}</p>`
+    const safeError = escapeHtml(error);
+    return new NextResponse(
+      `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+        <h1>Authorization Failed</h1>
+        <p>Error: ${safeError}</p>
+      </body></html>`,
+      { headers: { "Content-Type": "text/html" } }
     );
   }
 
   if (!code) {
-    return page(
-      "No Code",
-      `<h1>No authorization code received</h1>`
+    return new NextResponse(
+      `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+        <h1>No authorization code received</h1>
+      </body></html>`,
+      { headers: { "Content-Type": "text/html" } }
+    );
+  }
+
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    return new NextResponse(
+      `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+        <h1>Missing environment variables</h1>
+      </body></html>`,
+      { headers: { "Content-Type": "text/html" } }
     );
   }
 
   try {
-    const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString(
-      "base64"
-    );
-    const tokenResponse = await fetch(
-      "https://accounts.spotify.com/api/token",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${basic}`,
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          grant_type: "authorization_code",
-          code,
-          redirect_uri: REDIRECT_URI,
-        }),
-      }
-    );
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
+      },
+      body: new URLSearchParams({
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: redirectUri,
+      }),
+      cache: "no-store",
+    });
 
-    const tokenData = await tokenResponse.json();
-
-    if (tokenData.error) {
-      return page(
-        "Token Exchange Failed",
-        `<h1 style="color:#ff4444;">Token Exchange Failed</h1>
-         <p>Error: ${escapeHtml(tokenData.error)}</p>
-         <p>${escapeHtml(tokenData.error_description || "")}</p>`
+    if (!response.ok) {
+      const errorText = await response.text();
+      const safeErrorText = escapeHtml(errorText);
+      return new NextResponse(
+        `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+          <h1>Token exchange failed</h1>
+          <p>${safeErrorText}</p>
+        </body></html>`,
+        { headers: { "Content-Type": "text/html" } }
       );
     }
 
-    const safeToken = escapeHtml(tokenData.refresh_token || "");
+    const data = await response.json();
+    const safeRefreshToken = escapeHtml(data.refresh_token || "none");
 
-    return page(
-      "Spotify Connected",
-      `<h1 style="color:#00E5FF;">Spotify Connected!</h1>
-       <p style="color:#22C55E;font-size:18px;">Authorization successful.</p>
-       <br/>
-       <p style="color:#5A5A6A;">Your refresh token (add this to Vercel env vars as SPOTIFY_REFRESH_TOKEN):</p>
-       <div id="token-box" style="background:#0C0C14;border:1px solid #1A1A2E;border-radius:8px;padding:16px;margin:16px 0;word-break:break-all;">
-         <code style="color:#00E5FF;font-size:14px;">${safeToken}</code>
-       </div>
-       <button id="copy-btn"
-         style="background:#00E5FF;color:#050508;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-family:monospace;font-weight:bold;">
-         Copy Refresh Token
-       </button>
-       <script>
-         document.getElementById('copy-btn').addEventListener('click', function() {
-           var t = document.getElementById('token-box').textContent.trim();
-           navigator.clipboard.writeText(t).then(function() {
-             document.getElementById('copy-btn').textContent = 'Copied!';
-           });
-         });
-       </script>
-       <br/><br/>
-       <p style="color:#5A5A6A;font-size:12px;">After copying, add it as SPOTIFY_REFRESH_TOKEN in your Vercel project environment variables, then redeploy.</p>`
+    return new NextResponse(
+      `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+        <h1 style="color:#00E5FF;">Success!</h1>
+        <p>Your refresh token:</p>
+        <pre style="background:#0A0A12;padding:1rem;border-radius:8px;border:1px solid #161624;word-break:break-all;max-width:600px;">${safeRefreshToken}</pre>
+        <p style="color:#8E8EA0;margin-top:1rem;">Copy this token and add it as SPOTIFY_REFRESH_TOKEN in your Vercel environment variables.</p>
+      </body></html>`,
+      { headers: { "Content-Type": "text/html" } }
     );
   } catch (err) {
-    return page(
-      "Error",
-      `<h1 style="color:#ff4444;">Error</h1>
-       <p>${escapeHtml(String(err))}</p>`
+    const message = err instanceof Error ? err.message : "Unknown error";
+    const safeMessage = escapeHtml(message);
+    return new NextResponse(
+      `<html><body style="background:#050508;color:#ededf0;font-family:monospace;padding:2rem;">
+        <h1>Error</h1>
+        <p>${safeMessage}</p>
+      </body></html>`,
+      { headers: { "Content-Type": "text/html" } }
     );
   }
 }

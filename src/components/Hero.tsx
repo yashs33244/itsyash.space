@@ -1,233 +1,217 @@
 "use client";
 
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const line1Ref = useRef<HTMLDivElement>(null);
-  const line2Ref = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLParagraphElement>(null);
-  const statusRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const marqueeRef = useRef<HTMLDivElement>(null);
+const taglines = [
+  "Building infrastructure that scales",
+  "Shipping production systems",
+  "From Kubernetes to pixel-perfect UIs",
+];
 
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+const nameTop = "YASH";
+const nameBottom = "SINGH";
 
-      // Status bar fade in
-      if (statusRef.current) {
-        tl.from(statusRef.current, {
-          y: -20,
-          opacity: 0,
-          duration: 0.6,
-        });
-      }
-
-      // YASH - staggered letter reveal
-      if (line1Ref.current) {
-        const chars = line1Ref.current.querySelectorAll(".hero-letter");
-        tl.from(
-          chars,
-          {
-            y: 140,
-            rotateX: -50,
-            opacity: 0,
-            stagger: 0.05,
-            duration: 1,
-          },
-          "-=0.2"
-        );
-      }
-
-      // Marquee line
-      if (marqueeRef.current) {
-        tl.from(
-          marqueeRef.current,
-          {
-            scaleX: 0,
-            opacity: 0,
-            duration: 0.8,
-          },
-          "-=0.5"
-        );
-      }
-
-      // SINGH - staggered letter reveal
-      if (line2Ref.current) {
-        const chars = line2Ref.current.querySelectorAll(".hero-letter");
-        tl.from(
-          chars,
-          {
-            y: 140,
-            rotateX: -50,
-            opacity: 0,
-            stagger: 0.05,
-            duration: 1,
-          },
-          "-=0.7"
-        );
-      }
-
-      // Tagline
-      if (taglineRef.current) {
-        tl.from(
-          taglineRef.current,
-          {
-            y: 30,
-            opacity: 0,
-            duration: 0.7,
-          },
-          "-=0.4"
-        );
-      }
-
-      // Scroll indicator
-      if (scrollRef.current) {
-        tl.from(
-          scrollRef.current,
-          {
-            opacity: 0,
-            duration: 0.5,
-          },
-          "-=0.1"
-        );
-      }
+const letterVariants = {
+  hidden: { opacity: 0, y: 40, filter: "blur(8px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      delay: 0.3 + i * 0.06,
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
-    { scope: containerRef }
-  );
+  }),
+};
 
-  const marqueeWords = [
-    "systems",
-    "infrastructure",
-    "kubernetes",
-    "ml",
-    "production",
-    "real-time",
-    "devops",
-    "distributed",
-  ];
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  }),
+};
+
+const badges = [
+  "4th Year IIIT Una",
+  "SDE @ Binocs",
+  "K8s + AWS + Go",
+];
+
+export default function Hero() {
+  const [taglineIndex, setTaglineIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaglineIndex((prev) => (prev + 1) % taglines.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, []);
+
+  const allLetters = [...nameTop];
+  const allLettersBottom = [...nameBottom];
 
   return (
     <section
-      id="home"
-      ref={containerRef}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      id="hero"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-dot-grid"
+      style={{ backgroundColor: "#050508" }}
     >
-      {/* ─── Background layers ─────────────────── */}
-      <div className="absolute inset-0 bg-dot-grid opacity-50" />
+      {/* Radial gradient overlay */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 50% at 50% 45%, rgba(0,229,255,0.03) 0%, transparent 70%)",
+        }}
+      />
 
-      {/* Drifting radial gradient */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full bg-cyan/[0.03] blur-[150px] animate-gradient-drift" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-violet/[0.02] blur-[120px]" />
+      {/* SEO h1 */}
+      <h1 className="sr-only">Yash Singh — Software Engineer</h1>
 
-      {/* Subtle scan line */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.02]">
-        <div className="w-full h-[2px] bg-gradient-to-r from-transparent via-cyan to-transparent animate-scan-line" />
-      </div>
-
-      {/* ─── Content ───────────────────────────── */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8">
-        {/* Status line */}
-        <div
-          ref={statusRef}
-          className="flex items-center gap-2.5 mb-10 md:mb-14 justify-center"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-60" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-success" />
-          </span>
-          <span className="font-mono text-xs md:text-sm text-text-secondary tracking-wide">
-            SDE Intern @ Binocs, Bangalore
-          </span>
-        </div>
-
-        {/* Name typography */}
-        <div className="text-center">
-          <h1 className="sr-only">Yash Singh</h1>
-
+      <div className="relative z-10 flex flex-col items-center gap-0 px-4">
+        {/* ── Name Block ── */}
+        <div className="flex flex-col items-center select-none">
           {/* YASH */}
-          <div
-            ref={line1Ref}
-            className="overflow-hidden"
-            style={{ perspective: "800px" }}
-            aria-hidden="true"
-          >
-            <span className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter block">
-              {"YASH".split("").map((char, i) => (
-                <span key={i} className="hero-letter inline-block">
-                  {char}
-                </span>
-              ))}
-            </span>
-          </div>
-
-          {/* Animated keyword marquee between lines */}
-          <div
-            ref={marqueeRef}
-            className="relative flex items-center gap-4 my-3 md:my-4 origin-left"
-            aria-hidden="true"
-          >
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-            <div className="overflow-hidden max-w-xs md:max-w-md">
-              <div className="flex gap-4 animate-marquee" style={{ "--duration": "20s" } as React.CSSProperties}>
-                {[...marqueeWords, ...marqueeWords].map((word, i) => (
-                  <span
-                    key={i}
-                    className="font-mono text-[10px] md:text-xs text-text-muted whitespace-nowrap uppercase tracking-widest"
-                  >
-                    {word}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+          <div className="flex overflow-hidden" aria-hidden="true">
+            {allLetters.map((char, i) => (
+              <motion.span
+                key={`top-${i}`}
+                custom={i}
+                variants={letterVariants}
+                initial="hidden"
+                animate="visible"
+                className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                style={{ color: "#EDEDF0" }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </div>
 
           {/* SINGH */}
-          <div
-            ref={line2Ref}
-            className="overflow-hidden"
-            style={{ perspective: "800px" }}
-            aria-hidden="true"
-          >
-            <span className="font-display text-[15vw] md:text-[12vw] lg:text-[10vw] text-text leading-[0.9] tracking-tighter block">
-              {"SINGH".split("").map((char, i) => (
-                <span key={i} className="hero-letter inline-block">
-                  {char}
-                </span>
-              ))}
-            </span>
+          <div className="flex overflow-hidden -mt-2 md:-mt-4" aria-hidden="true">
+            {allLettersBottom.map((char, i) => (
+              <motion.span
+                key={`bot-${i}`}
+                custom={i + allLetters.length}
+                variants={letterVariants}
+                initial="hidden"
+                animate="visible"
+                className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                style={{ color: "#EDEDF0" }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </div>
         </div>
 
-        {/* Tagline */}
-        <p
-          ref={taglineRef}
-          className="text-center text-text-secondary text-base md:text-lg mt-8 md:mt-10 max-w-xl mx-auto leading-relaxed"
+        {/* ── Rotating Tagline ── */}
+        <motion.div
+          custom={1.4}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="mt-8 md:mt-12 h-8 flex items-center justify-center overflow-hidden"
         >
-          Building production systems that solve real problems
-        </p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={taglineIndex}
+              initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="font-mono text-sm md:text-base tracking-wide"
+              style={{ color: "#8E8EA0" }}
+            >
+              {taglines[taglineIndex]}
+            </motion.p>
+          </AnimatePresence>
+        </motion.div>
+
+        {/* ── Horizontal Line with Pulsing Dot ── */}
+        <motion.div
+          custom={1.8}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="mt-10 md:mt-14 flex items-center gap-0 w-full max-w-xs md:max-w-md"
+        >
+          <div
+            className="flex-1 h-px"
+            style={{ backgroundColor: "#161624" }}
+          />
+          <span className="relative flex h-2.5 w-2.5 ml-1">
+            <span
+              className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+              style={{ backgroundColor: "#00E5FF" }}
+            />
+            <span
+              className="relative inline-flex rounded-full h-2.5 w-2.5"
+              style={{ backgroundColor: "#00E5FF" }}
+            />
+          </span>
+        </motion.div>
+
+        {/* ── Stat Badges ── */}
+        <motion.div
+          custom={2.2}
+          variants={fadeUp}
+          initial="hidden"
+          animate="visible"
+          className="mt-10 md:mt-14 flex flex-wrap items-center justify-center gap-3"
+        >
+          {badges.map((badge) => (
+            <span
+              key={badge}
+              className="inline-flex items-center rounded-full border px-4 py-1.5 font-mono text-xs tracking-wider transition-colors duration-300 hover:border-accent/40"
+              style={{
+                borderColor: "#161624",
+                color: "#8E8EA0",
+                backgroundColor: "rgba(10,10,18,0.6)",
+              }}
+            >
+              {badge}
+            </span>
+          ))}
+        </motion.div>
       </div>
 
-      {/* ─── Scroll indicator ──────────────────── */}
-      <div
-        ref={scrollRef}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+      {/* ── Scroll Indicator ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.8, duration: 1 }}
+        className="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
       >
-        <span className="font-mono text-[9px] text-text-muted uppercase tracking-[0.2em]">
-          Scroll
+        <span
+          className="font-mono text-[10px] uppercase tracking-[0.25em]"
+          style={{ color: "#5C5C6F" }}
+        >
+          scroll
         </span>
-        <div className="w-5 h-8 rounded-full border border-border flex items-start justify-center pt-1.5">
-          <ChevronDown
-            size={10}
-            className="text-cyan animate-scroll-hint"
+        <motion.svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          animate={{ y: [0, 5, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path
+            d="M3 6L8 11L13 6"
+            stroke="#5C5C6F"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
-        </div>
-      </div>
+        </motion.svg>
+      </motion.div>
     </section>
   );
 }

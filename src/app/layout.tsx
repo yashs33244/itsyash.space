@@ -1,75 +1,124 @@
 import type { Metadata } from "next";
-import { Syne, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
-const syne = Syne({
-  variable: "--font-syne",
+/* ─── Fonts ──────────────────────────────────────── */
+
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-space-grotesk",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const jetbrains = JetBrains_Mono({
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
   variable: "--font-jetbrains",
-  subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600"],
 });
+
+/* ─── Metadata ───────────────────────────────────── */
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://itsyash.space"),
-  title: "Yash Singh — Systems Engineer",
+  title: "Yash Singh — Software Engineer",
   description:
-    "Systems engineer building production infrastructure, LLM pipelines, and real-time applications at scale. SDE Intern at Binocs, Bangalore.",
+    "Software engineer building infrastructure, designing systems, and shipping production-grade software. Focused on developer tooling, full-stack architecture, and things that work at scale.",
   keywords: [
     "Yash Singh",
-    "Systems Engineer",
     "Software Engineer",
-    "Kubernetes",
-    "Docker",
-    "Python",
-    "TypeScript",
+    "Full Stack Developer",
     "React",
     "Next.js",
-    "LLM",
+    "TypeScript",
     "Infrastructure",
-    "Binocs",
-    "IIIT Una",
+    "Systems Design",
   ],
-  authors: [{ name: "Yash Singh" }],
+  authors: [{ name: "Yash Singh", url: "https://itsyash.space" }],
+  creator: "Yash Singh",
   openGraph: {
-    title: "Yash Singh — Systems Engineer",
-    description:
-      "Building production systems that scale. SDE Intern at Binocs, Bangalore.",
     type: "website",
     locale: "en_US",
+    url: "https://itsyash.space",
+    siteName: "Yash Singh",
+    title: "Yash Singh — Software Engineer",
+    description:
+      "Building infrastructure, designing systems, and shipping production-grade software.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Yash Singh — Software Engineer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yash Singh — Systems Engineer",
+    title: "Yash Singh — Software Engineer",
     description:
-      "Building production systems that scale. SDE Intern at Binocs, Bangalore.",
+      "Building infrastructure, designing systems, and shipping production-grade software.",
+    images: ["/og-image.png"],
+    creator: "@yashsingh",
   },
-  robots: { index: true, follow: true },
-  other: {
-    "theme-color": "#050508",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
+/* ─── Theme Color ────────────────────────────────── */
+
+export const viewport = {
+  themeColor: "#050508",
+  width: "device-width",
+  initialScale: 1,
+};
+
+/* ─── Layout ─────────────────────────────────────── */
+
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body
-        className={`${syne.variable} ${jakarta.variable} ${jetbrains.variable} antialiased noise`}
+        className="font-body bg-bg text-txt antialiased"
+        style={{
+          backgroundColor: "#050508",
+          color: "#EDEDF0",
+        }}
       >
-        {children}
+        {/* Noise overlay — sits above everything visually but passes through pointer events */}
+        <div className="noise" aria-hidden="true" />
+
+        {/* Navigation */}
+        <Navbar />
+
+        {/* Main content */}
+        <main id="main-content">{children}</main>
       </body>
     </html>
   );

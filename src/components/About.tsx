@@ -1,267 +1,285 @@
 "use client";
 
 import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { ExternalLink, Camera } from "lucide-react";
-import { GlowCard } from "./ui/GlowCard";
-import { Badge } from "./ui/Badge";
-import { AnimatedText } from "./ui/AnimatedText";
-import { SpotifyNowPlaying } from "./SpotifyNowPlaying";
+import { motion, useInView } from "framer-motion";
+import SpotifyNowPlaying from "./SpotifyNowPlaying";
 
-gsap.registerPlugin(ScrollTrigger);
+/* ── Animation helpers ── */
+const cardVariants = {
+  hidden: { opacity: 0, y: 32, filter: "blur(6px)" },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: {
+      delay: 0.1 + i * 0.12,
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  }),
+};
 
-const PROFILE_IMAGE = "/images/yash-profile.png";
-
-const terminalLines = [
-  '$ cat ~/.config/yash.toml',
-  '',
-  '[identity]',
-  'name = "Yash Singh"',
-  'role = "SDE Intern"',
-  'org = "Binocs"',
-  'location = "Bangalore, IN"',
-  'education = "IIIT Una, B.Tech CS"',
-  'gpa = 8.3',
-  '',
-  '[interests]',
-  'active = ["distributed_systems", "k8s", "llm_infra", "real_time_systems"]',
-];
-
-function colorize(line: string): string {
-  if (line.startsWith('$')) {
-    return `<span class="text-success">${line}</span>`;
-  }
-  return line
-    .replace(
-      /\[([^\]]+)\]/g,
-      '<span class="text-cyan">[$1]</span>'
-    )
-    .replace(
-      /"([^"]+)"/g,
-      '<span class="text-success">"$1"</span>'
-    )
-    .replace(
-      /= ([\d.]+)$/gm,
-      '= <span class="text-warning">$1</span>'
-    )
-    .replace(
-      /^(\w+)\s*=/gm,
-      '<span class="text-text">$1</span> ='
-    );
+/* ── Reusable card wrapper ── */
+function GridCard({
+  children,
+  className = "",
+  index = 0,
+  inView = false,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  index?: number;
+  inView?: boolean;
+}) {
+  return (
+    <motion.div
+      custom={index}
+      variants={cardVariants}
+      initial="hidden"
+      animate={inView ? "visible" : "hidden"}
+      className={`card group rounded-2xl border p-5 md:p-6 transition-colors duration-300 hover:border-[#00E5FF]/20 ${className}`}
+      style={{
+        backgroundColor: "#0A0A12",
+        borderColor: "#161624",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-export function About() {
+export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      const cards = gsap.utils.toArray<HTMLElement>(".about-card");
-      cards.forEach((card, i) => {
-        gsap.from(card, {
-          y: 50,
-          opacity: 0,
-          duration: 0.7,
-          delay: i * 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 88%",
-            toggleActions: "play none none reverse",
-          },
-        });
-      });
-    },
-    { scope: sectionRef }
-  );
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="about" ref={sectionRef} className="section-spacing">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-14">
-          <span className="font-mono text-cyan text-xs mb-3 block tracking-wider">
-            01 / ABOUT
-          </span>
-          <AnimatedText
-            text="Who I Am"
-            as="h2"
-            className="font-display text-4xl md:text-5xl lg:text-6xl text-text"
-            scrollTrigger
-          />
-        </div>
+    <section
+      id="about"
+      ref={sectionRef}
+      className="section-py relative overflow-hidden"
+      style={{ backgroundColor: "#050508" }}
+    >
+      <div className="section-container">
+        {/* ── Section Label ── */}
+        <motion.div
+          initial={{ opacity: 0, x: -16 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <span className="section-label">About</span>
+        </motion.div>
 
-        {/* Bento Grid - 12 column */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          {/* ─── Bio card (8 cols) ──────────────── */}
-          <GlowCard className="about-card md:col-span-8 p-6 md:p-8">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-1.5 h-1.5 rounded-full bg-cyan" />
-              <span className="font-mono text-[10px] text-text-muted uppercase tracking-[0.15em]">
+        {/* ── Bento Grid ── */}
+        <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-auto">
+          {/* ─── 1. Bio Card — spans 2 cols on desktop ─── */}
+          <GridCard
+            className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between"
+            index={0}
+            inView={isInView}
+          >
+            <div>
+              <p
+                className="font-mono text-[10px] uppercase tracking-[0.2em] mb-4"
+                style={{ color: "#5C5C6F" }}
+              >
                 Bio
-              </span>
+              </p>
+              <p
+                className="font-body text-sm md:text-[15px] leading-relaxed md:leading-[1.75]"
+                style={{ color: "#8E8EA0" }}
+              >
+                I&apos;m a 4th year CS student at IIIT Una, currently an SDE
+                intern at Binocs, Bangalore. I build production infrastructure
+                — microservices, CI/CD pipelines, Kubernetes clusters, and
+                LLM-powered workflows.
+              </p>
+              <p
+                className="font-body text-sm md:text-[15px] leading-relaxed md:leading-[1.75] mt-4"
+                style={{ color: "#8E8EA0" }}
+              >
+                Previously at ViewR (IIT Delhi startup) building real-time
+                video systems with sub-100ms latency, and at IIT Mandi as a
+                research assistant working on GNNs and Transformers. I care
+                about systems that work under pressure and code that reads
+                like prose.
+              </p>
             </div>
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed mb-4">
-              I&apos;m a systems engineer who builds{" "}
-              <span className="text-text font-medium">
-                infrastructure that actually works at scale
-              </span>
-              . Currently at{" "}
-              <span className="text-cyan">Binocs</span> in Bangalore, I
-              architect microservices, design LLM pipelines, and manage
-              Kubernetes clusters that handle real production traffic.
-            </p>
-            <p className="text-text-secondary text-base md:text-lg leading-relaxed mb-5">
-              I don&apos;t just write code &mdash; I handle{" "}
-              <span className="text-text font-medium">
-                networking, Docker orchestration, CI/CD pipelines
-              </span>
-              , and the messy reality of distributed systems. Previously
-              shipped a desktop app with 5 microservices at{" "}
-              <span className="text-cyan">ViewR</span> (IIT Delhi startup)
-              and conducted GNN/Transformer research at{" "}
-              <span className="text-cyan">IIT Mandi</span>.
-            </p>
-            <p className="font-mono text-xs text-text-muted">
-              4th year B.Tech CS @ IIIT Una &middot; GPA 8.3/10
-            </p>
-          </GlowCard>
 
-          {/* ─── Photo card (4 cols) ────────────── */}
-          <GlowCard className="about-card md:col-span-4 p-3">
-            <div className="flex items-center gap-2 px-2 py-1.5 mb-2">
-              <span className="font-mono text-[10px] text-text-muted tracking-wider">
-                about:// yash
-              </span>
-            </div>
-            <div className="relative w-full aspect-square rounded-xl overflow-hidden group">
-              <Image
-                src={PROFILE_IMAGE}
-                alt="Yash Singh"
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, 33vw"
+            {/* Decorative line at bottom of bio card */}
+            <div className="mt-6 flex items-center gap-2">
+              <div
+                className="h-px flex-1"
+                style={{ backgroundColor: "#161624" }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-transparent" />
-              <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-cyan/20 transition-colors duration-500" />
-            </div>
-          </GlowCard>
-
-          {/* ─── Terminal card (6 cols) ─────────── */}
-          <GlowCard className="about-card md:col-span-6 p-0">
-            {/* Title bar */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-              <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-danger/70" />
-                <div className="w-2.5 h-2.5 rounded-full bg-warning/70" />
-                <div className="w-2.5 h-2.5 rounded-full bg-success/70" />
-              </div>
-              <span className="font-mono text-[10px] text-text-muted ml-2">
-                ~/.config/yash.toml
+              <span
+                className="font-mono text-[10px]"
+                style={{ color: "#5C5C6F" }}
+              >
+                //
               </span>
             </div>
-            {/* Terminal body */}
-            <pre className="font-mono text-xs leading-relaxed p-4 overflow-x-auto">
-              <code>
-                {terminalLines.map((line, i) => (
-                  <div key={i} className="flex">
-                    <span className="text-text-muted/40 mr-3 select-none w-4 text-right text-[10px]">
-                      {i + 1}
-                    </span>
-                    <span
-                      className="text-text-secondary"
-                      dangerouslySetInnerHTML={{
-                        __html: colorize(line) || "&nbsp;",
-                      }}
-                    />
-                  </div>
-                ))}
-                <div className="flex mt-1">
-                  <span className="text-text-muted/40 mr-3 select-none w-4 text-right text-[10px]">
-                    {terminalLines.length + 1}
-                  </span>
-                  <span className="text-success">
-                    $<span className="animate-blink text-cyan ml-1">_</span>
-                  </span>
-                </div>
-              </code>
-            </pre>
-          </GlowCard>
+          </GridCard>
 
-          {/* ─── Competitive coding (3 cols) ────── */}
-          <GlowCard className="about-card md:col-span-3 p-5">
-            <div className="flex flex-col h-full">
-              <span className="font-mono text-[10px] text-text-muted uppercase tracking-[0.15em] mb-4">
-                Competitive Coding
-              </span>
-
-              <a
-                href="https://leetcode.com/yashs33244"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between py-2.5 border-b border-border group"
-              >
-                <div>
-                  <p className="text-sm text-text font-medium">LeetCode</p>
-                  <p className="font-mono text-[10px] text-text-muted">
-                    @yashs33244
-                  </p>
-                </div>
-                <ExternalLink
-                  size={12}
-                  className="text-text-muted group-hover:text-cyan transition-colors"
-                />
-              </a>
-
-              <a
-                href="https://codeforces.com/profile/yashs3324"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between py-2.5 group"
-              >
-                <div>
-                  <p className="text-sm text-text font-medium">Codeforces</p>
-                  <p className="font-mono text-[10px] text-text-muted">
-                    @yashs3324
-                  </p>
-                </div>
-                <ExternalLink
-                  size={12}
-                  className="text-text-muted group-hover:text-cyan transition-colors"
-                />
-              </a>
+          {/* ─── 2. Profile Photo Card ─── */}
+          <GridCard
+            className="md:col-span-1 lg:col-span-2 flex items-center justify-center overflow-hidden"
+            index={1}
+            inView={isInView}
+          >
+            <div className="relative w-full aspect-square max-w-[320px] rounded-xl overflow-hidden transition-shadow duration-500 group-hover:shadow-[0_0_40px_-12px_rgba(0,229,255,0.15)]">
+              {/* Cyan border glow on hover */}
+              <div
+                className="absolute inset-0 rounded-xl border-2 border-transparent transition-colors duration-500 group-hover:border-[#00E5FF]/30 z-10 pointer-events-none"
+              />
+              <Image
+                src="/images/yash-profile.png"
+                alt="Yash Singh — Software Engineer"
+                width={800}
+                height={800}
+                priority
+                className="w-full h-full object-cover rounded-xl"
+                style={{ filter: "saturate(0.9) contrast(1.05)" }}
+              />
             </div>
-          </GlowCard>
+          </GridCard>
 
-          {/* ─── Photography card (3 cols) ──────── */}
-          <GlowCard className="about-card md:col-span-3 p-5">
-            <a
-              href="https://www.instagram.com/yash_s3324/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col h-full group"
+          {/* ─── 3. Location Card ─── */}
+          <GridCard
+            className="md:col-span-1 lg:col-span-1"
+            index={2}
+            inView={isInView}
+          >
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.2em] mb-3"
+              style={{ color: "#5C5C6F" }}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet/20 to-cyan/10 flex items-center justify-center mb-4">
-                <Camera size={18} className="text-violet" />
-              </div>
-              <p className="text-sm text-text font-medium mb-1">
-                Through the Lens
-              </p>
-              <p className="text-xs text-text-muted leading-relaxed mb-3">
-                I also capture moments
-              </p>
-              <Badge variant="outline" size="sm" className="mt-auto w-fit">
-                @yash_s3324
-              </Badge>
-            </a>
-          </GlowCard>
+              Location
+            </p>
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2">
+                <span
+                  className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+                  style={{
+                    backgroundColor: "#00E5FF",
+                    animationDuration: "2s",
+                  }}
+                />
+                <span
+                  className="relative inline-flex rounded-full h-2 w-2"
+                  style={{ backgroundColor: "#00E5FF" }}
+                />
+              </span>
+              <span
+                className="font-display text-lg md:text-xl font-medium"
+                style={{ color: "#EDEDF0" }}
+              >
+                Bangalore, IN
+              </span>
+            </div>
+          </GridCard>
 
-          {/* ─── Spotify (6 cols) ───────────────── */}
-          <div className="about-card md:col-span-6">
+          {/* ─── 4. Education Card ─── */}
+          <GridCard
+            className="md:col-span-1 lg:col-span-1"
+            index={3}
+            inView={isInView}
+          >
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.2em] mb-3"
+              style={{ color: "#5C5C6F" }}
+            >
+              Education
+            </p>
+            <p
+              className="font-display text-lg md:text-xl font-medium"
+              style={{ color: "#EDEDF0" }}
+            >
+              B.Tech CS
+            </p>
+            <p
+              className="font-body text-sm mt-1"
+              style={{ color: "#8E8EA0" }}
+            >
+              IIIT Una
+            </p>
+            <div className="mt-3 flex items-center justify-between">
+              <span
+                className="font-mono text-xs"
+                style={{ color: "#00E5FF" }}
+              >
+                GPA 8.3/10
+              </span>
+              <span
+                className="font-mono text-[11px]"
+                style={{ color: "#5C5C6F" }}
+              >
+                2022–2026
+              </span>
+            </div>
+          </GridCard>
+
+          {/* ─── 5. Currently Card ─── */}
+          <GridCard
+            className="md:col-span-1 lg:col-span-1"
+            index={4}
+            inView={isInView}
+          >
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.2em] mb-3"
+              style={{ color: "#5C5C6F" }}
+            >
+              Currently
+            </p>
+            <p
+              className="font-display text-lg md:text-xl font-medium"
+              style={{ color: "#EDEDF0" }}
+            >
+              SDE Intern
+            </p>
+            <p
+              className="font-body text-sm mt-1"
+              style={{ color: "#8E8EA0" }}
+            >
+              @ Binocs
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span
+                  className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+                  style={{
+                    backgroundColor: "#22C55E",
+                    animationDuration: "1.8s",
+                  }}
+                />
+                <span
+                  className="relative inline-flex rounded-full h-2 w-2"
+                  style={{ backgroundColor: "#22C55E" }}
+                />
+              </span>
+              <span
+                className="font-mono text-xs"
+                style={{ color: "#22C55E" }}
+              >
+                Active
+              </span>
+            </div>
+          </GridCard>
+
+          {/* ─── 6. Spotify Card ─── */}
+          <GridCard
+            className="md:col-span-1 lg:col-span-1"
+            index={5}
+            inView={isInView}
+          >
+            <p
+              className="font-mono text-[10px] uppercase tracking-[0.2em] mb-3"
+              style={{ color: "#5C5C6F" }}
+            >
+              Listening
+            </p>
             <SpotifyNowPlaying />
-          </div>
+          </GridCard>
         </div>
       </div>
     </section>

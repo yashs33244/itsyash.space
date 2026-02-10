@@ -1,43 +1,35 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowUp } from "lucide-react";
-
-export function Footer() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+export default function Footer() {
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-border">
-      {/* Cyan accent line */}
-      <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-cyan/25 to-transparent" />
-
-      <div className="max-w-7xl mx-auto px-6 py-7">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          {/* Left */}
-          <p className="font-mono text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} Yash Singh
-          </p>
-
-          {/* Center */}
-          <p className="font-mono text-xs text-text-muted/50">
-            Built with Next.js &middot; Deployed on Vercel
-          </p>
-
-          {/* Right */}
-          <motion.button
-            onClick={scrollToTop}
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 font-mono text-xs text-text-muted hover:text-cyan transition-colors group"
+    <footer
+      className="border-t border-line"
+      style={{ borderColor: "#161624" }}
+    >
+      <div className="section-container py-8">
+        {/* Top row */}
+        <div className="flex items-center justify-between mb-3">
+          <span
+            className="font-mono text-sm text-txt"
+            style={{ color: "#EDEDF0" }}
           >
-            Back to top
-            <div className="w-7 h-7 rounded-full border border-border group-hover:border-cyan/25 flex items-center justify-center transition-colors">
-              <ArrowUp size={11} />
-            </div>
-          </motion.button>
+            Yash Singh
+          </span>
+          <span
+            className="font-mono text-sm text-txt-secondary"
+            style={{ color: "#8E8EA0" }}
+          >
+            {currentYear}
+          </span>
         </div>
+
+        {/* Bottom row */}
+        <p
+          className="text-txt-muted text-xs"
+          style={{ color: "#5C5C6F" }}
+        >
+          Built with Next.js, Tailwind, and too much coffee
+        </p>
       </div>
     </footer>
   );

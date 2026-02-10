@@ -1,150 +1,160 @@
 "use client";
 
 import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { AnimatedText } from "./ui/AnimatedText";
-import { Marquee } from "./ui/Marquee";
+import { motion, useInView } from "framer-motion";
 
-gsap.registerPlugin(ScrollTrigger);
-
-interface SkillCategory {
-  label: string;
-  status: string;
-  skills: string[];
-}
-
-const categories: SkillCategory[] = [
+const skillCategories = [
   {
-    label: "LANGUAGES",
-    status: "loaded",
-    skills: ["Python", "TypeScript", "Go", "C++", "JavaScript", "SQL", "Rust", "Java"],
+    name: "Languages",
+    items: ["Python", "TypeScript", "Go", "C++", "JavaScript", "SQL", "Rust", "Java"],
   },
   {
-    label: "FRAMEWORKS",
-    status: "active",
-    skills: [
-      "React",
-      "Next.js",
-      "FastAPI",
-      "Node.js",
-      "Electron",
-      "Express",
-      "TailwindCSS",
-      "Prisma",
-    ],
+    name: "Frameworks",
+    items: ["React", "Next.js", "FastAPI", "Node.js", "Electron", "Express", "TailwindCSS", "Prisma"],
   },
   {
-    label: "INFRASTRUCTURE",
-    status: "running",
-    skills: [
-      "Kubernetes",
-      "Docker",
-      "AWS",
-      "Helm",
-      "Grafana",
-      "Redis",
-      "PostgreSQL",
-      "Nginx",
-      "CI/CD",
-      "Git",
-    ],
+    name: "Infrastructure",
+    items: ["Kubernetes", "Docker", "AWS", "Helm", "Grafana", "Redis", "PostgreSQL", "Nginx", "CI/CD", "Git"],
   },
   {
-    label: "AI / ML / REAL-TIME",
-    status: "active",
-    skills: [
-      "PyTorch",
-      "Transformers",
-      "GNN",
-      "OpenCV",
-      "LLM APIs",
-      "AWS Rekognition",
-      "WebSocket",
-      "RTSP",
-      "Gemini API",
-    ],
+    name: "AI/ML",
+    items: ["PyTorch", "Transformers", "GNN", "OpenCV", "LLM APIs", "AWS Rekognition", "WebSocket", "Gemini API"],
   },
 ];
 
-function SkillChip({ name }: { name: string }) {
-  return (
-    <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-bg-surface hover:border-cyan/20 hover:bg-bg-elevated transition-all duration-300 group whitespace-nowrap">
-      <span className="w-1.5 h-1.5 rounded-full bg-text-muted group-hover:bg-cyan transition-colors duration-300" />
-      <span className="font-mono text-xs text-text-secondary group-hover:text-text transition-colors duration-300">
-        {name}
-      </span>
-    </div>
-  );
-}
+const allSkills = skillCategories.flatMap((cat) => cat.items);
 
-export function Skills() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      gsap.from(".skill-row", {
-        opacity: 0,
-        y: 25,
-        stagger: 0.12,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-      });
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
     },
-    { scope: sectionRef }
-  );
+  },
+};
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -24 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0, 0, 0.58, 1] as [number, number, number, number] },
+  },
+};
+
+const tagVariants = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.3, ease: [0, 0, 0.58, 1] as [number, number, number, number] },
+  },
+};
+
+export default function Skills() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
   return (
-    <section
-      id="skills"
-      ref={sectionRef}
-      className="section-spacing overflow-hidden"
-    >
-      <div className="max-w-7xl mx-auto mb-14">
-        <span className="font-mono text-cyan text-xs mb-3 block tracking-wider">
-          04 / SKILLS
-        </span>
-        <AnimatedText
-          text="System Status"
-          as="h2"
-          className="font-display text-4xl md:text-5xl lg:text-6xl text-text"
-          scrollTrigger
-        />
-        <p className="text-text-secondary mt-4 max-w-xl text-base md:text-lg">
-          Technologies currently loaded and running in production.
-        </p>
-      </div>
+    <section id="skills" ref={sectionRef} className="section-py">
+      <div className="section-container">
+        {/* Section Label */}
+        <p className="section-label">Skills</p>
 
-      {/* System-status style rows + marquee */}
-      <div className="space-y-6">
-        {categories.map((cat, i) => (
-          <div key={cat.label} className="skill-row">
-            {/* Category label */}
-            <div className="max-w-7xl mx-auto px-6 mb-3 flex items-center gap-3">
-              <span className="font-mono text-[10px] text-text-muted uppercase tracking-[0.15em]">
-                {cat.label}
-              </span>
-              <span className="font-mono text-[9px] px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
-                {cat.status}
-              </span>
-            </div>
+        {/* Section Heading */}
+        <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-txt mb-12 tracking-tight"
+            style={{ color: "#EDEDF0" }}>
+          System Status
+        </h2>
 
-            <Marquee
-              direction={i % 2 === 0 ? "left" : "right"}
-              duration={35 + i * 5}
+        {/* Skill Categories Dashboard */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          className="space-y-6 mb-16"
+        >
+          {skillCategories.map((category) => (
+            <motion.div
+              key={category.name}
+              variants={rowVariants}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5"
             >
-              {cat.skills.map((skill) => (
-                <SkillChip key={skill} name={skill} />
+              {/* Category Name */}
+              <span
+                className="font-mono text-accent text-sm uppercase tracking-widest shrink-0 w-32"
+                style={{ color: "#00E5FF" }}
+              >
+                {category.name}
+              </span>
+
+              {/* Skill Tags */}
+              <div className="flex flex-wrap gap-2">
+                {category.items.map((skill, idx) => (
+                  <motion.span
+                    key={skill}
+                    variants={tagVariants}
+                    custom={idx}
+                    className="
+                      font-mono text-xs px-3 py-1.5 rounded-full
+                      border border-line bg-bg-surface text-txt-secondary
+                      hover:border-accent/40 hover:text-txt hover:shadow-[0_0_12px_rgba(0,229,255,0.08)]
+                      transition-all duration-300 cursor-default select-none
+                    "
+                    style={{
+                      borderColor: "rgba(22, 22, 36, 1)",
+                      backgroundColor: "rgba(10, 10, 18, 1)",
+                      color: "#8E8EA0",
+                    }}
+                    whileHover={{
+                      borderColor: "rgba(0, 229, 255, 0.4)",
+                      color: "#EDEDF0",
+                    }}
+                  >
+                    {skill}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Marquee Ticker */}
+        <div className="relative overflow-hidden py-4 border-t border-b border-line"
+             style={{ borderColor: "#161624" }}>
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-bg to-transparent pointer-events-none"
+               style={{ background: "linear-gradient(to right, #050508, transparent)" }} />
+          <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-bg to-transparent pointer-events-none"
+               style={{ background: "linear-gradient(to left, #050508, transparent)" }} />
+
+          <div className="flex animate-marquee whitespace-nowrap">
+            {/* First copy */}
+            <div className="flex gap-6 mr-6">
+              {allSkills.map((skill, i) => (
+                <span
+                  key={`marquee-a-${i}`}
+                  className="font-mono text-xs text-txt-muted"
+                  style={{ color: "#5C5C6F" }}
+                >
+                  {skill}
+                </span>
               ))}
-            </Marquee>
+            </div>
+            {/* Duplicate for seamless loop */}
+            <div className="flex gap-6 mr-6" aria-hidden="true">
+              {allSkills.map((skill, i) => (
+                <span
+                  key={`marquee-b-${i}`}
+                  className="font-mono text-xs text-txt-muted"
+                  style={{ color: "#5C5C6F" }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );

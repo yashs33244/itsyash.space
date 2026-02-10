@@ -1,219 +1,213 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
-  Mail,
   Github,
   Linkedin,
+  ExternalLink,
   Copy,
   Check,
-  ArrowUpRight,
-  Code2,
   Trophy,
 } from "lucide-react";
-import { AnimatedText } from "./ui/AnimatedText";
-import { MagneticButton } from "./ui/MagneticButton";
-import { GlowCard } from "./ui/GlowCard";
 
-gsap.registerPlugin(ScrollTrigger);
+const EMAIL = "yashs3324@gmail.com";
 
 const socials = [
   {
     label: "GitHub",
     href: "https://github.com/yashs33244",
-    icon: <Github size={18} />,
-    handle: "@yashs33244",
+    icon: Github,
   },
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/yash-singh-2757aa1b4/",
-    icon: <Linkedin size={18} />,
-    handle: "Yash Singh",
+    icon: Linkedin,
   },
   {
     label: "LeetCode",
     href: "https://leetcode.com/yashs33244",
-    icon: <Code2 size={18} />,
-    handle: "@yashs33244",
+    icon: ExternalLink,
   },
   {
     label: "Codeforces",
     href: "https://codeforces.com/profile/yashs3324",
-    icon: <Trophy size={18} />,
-    handle: "@yashs3324",
+    icon: ExternalLink,
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/yash_s3324/",
+    icon: ExternalLink,
   },
 ];
 
 const achievements = [
-  "4th place HD crypto wallet",
-  "Top 4 AlgoUniversity",
-  "7th Music Similarity ML",
+  "4th Place — HD Crypto Wallet Hackathon",
+  "Top 4 — AlgoUniversity",
+  "7th Place — Music Similarity ML Challenge",
 ];
 
-export function Contact() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+export default function Contact() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
   const [copied, setCopied] = useState(false);
-  const email = "yashs3324@gmail.com";
 
-  const copyEmail = async () => {
+  const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(email);
+      await navigator.clipboard.writeText(EMAIL);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      const ta = document.createElement("textarea");
-      ta.value = email;
-      document.body.appendChild(ta);
-      ta.select();
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = EMAIL;
+      document.body.appendChild(textArea);
+      textArea.select();
       document.execCommand("copy");
-      document.body.removeChild(ta);
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
-  useGSAP(
-    () => {
-      const els = gsap.utils.toArray<HTMLElement>(".contact-el");
-      els.forEach((el, i) => {
-        gsap.from(el, {
-          y: 35,
-          opacity: 0,
-          duration: 0.6,
-          delay: i * 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 90%",
-            toggleActions: "play none none reverse",
-          },
-        });
-      });
-    },
-    { scope: sectionRef }
-  );
-
   return (
-    <section id="contact" ref={sectionRef} className="section-spacing">
-      <div className="max-w-4xl mx-auto text-center">
-        {/* Header */}
-        <div className="mb-12 contact-el">
-          <span className="font-mono text-cyan text-xs mb-3 block tracking-wider">
-            06 / CONTACT
-          </span>
-          <AnimatedText
-            text="Let's Build Something"
-            as="h2"
-            className="font-display text-4xl md:text-5xl lg:text-6xl text-text"
-            scrollTrigger
-          />
-          <p className="text-text-secondary mt-4 max-w-lg mx-auto text-base md:text-lg">
-            Got an idea or want to collaborate? I&apos;m always open to
-            discussing new opportunities.
-          </p>
-        </div>
+    <section id="contact" ref={sectionRef} className="section-py">
+      <div className="section-container">
+        {/* Section Label */}
+        <p className="section-label">Contact</p>
 
-        {/* Email CTA */}
-        <div className="contact-el mb-10">
-          <MagneticButton>
-            <button
-              onClick={copyEmail}
-              className="group relative inline-flex items-center gap-3 px-7 py-4 rounded-2xl border border-border
-                bg-bg-surface hover:border-cyan/20 hover:bg-bg-elevated transition-all duration-500"
-            >
-              <Mail size={17} className="text-cyan" />
-              <span className="font-mono text-text text-base md:text-lg">
-                {email}
-              </span>
-              <AnimatePresence mode="wait">
-                {copied ? (
-                  <motion.span
-                    key="check"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="text-success"
-                  >
-                    <Check size={17} />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="copy"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    className="text-text-muted group-hover:text-cyan transition-colors"
-                  >
-                    <Copy size={17} />
-                  </motion.span>
-                )}
-              </AnimatePresence>
+        {/* Section Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-txt mb-16 tracking-tight text-center"
+          style={{ color: "#EDEDF0" }}
+        >
+          Let&apos;s Connect
+        </motion.h2>
 
-              <AnimatePresence>
-                {copied && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-success/10 border border-success/20 text-success font-mono text-xs"
-                  >
-                    Copied!
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-          </MagneticButton>
-        </div>
+        {/* Email Display */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="flex flex-col items-center gap-5 mb-16"
+        >
+          <a
+            href={`mailto:${EMAIL}`}
+            className="
+              font-mono text-lg sm:text-xl md:text-2xl text-accent
+              hover:text-glow transition-all duration-300
+            "
+            style={{ color: "#00E5FF" }}
+          >
+            {EMAIL}
+          </a>
 
-        {/* Social grid */}
-        <div className="contact-el grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
-          {socials.map((s) => (
-            <GlowCard key={s.label} className="p-5" hoverLift>
+          <button
+            onClick={handleCopy}
+            className={`
+              inline-flex items-center gap-2 px-5 py-2.5 rounded-full
+              border font-mono text-sm transition-all duration-300
+              ${
+                copied
+                  ? "border-accent/50 bg-accent/10 text-accent"
+                  : "border-line bg-bg-surface text-txt-secondary hover:border-accent/30 hover:text-txt"
+              }
+            `}
+            style={{
+              borderColor: copied ? "rgba(0, 229, 255, 0.5)" : "#161624",
+              backgroundColor: copied ? "rgba(0, 229, 255, 0.1)" : "#0A0A12",
+              color: copied ? "#00E5FF" : "#8E8EA0",
+            }}
+          >
+            {copied ? (
+              <>
+                <Check size={14} />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy size={14} />
+                Copy Email
+              </>
+            )}
+          </button>
+        </motion.div>
+
+        {/* Social Links */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-3 mb-14"
+        >
+          {socials.map((social) => {
+            const Icon = social.icon;
+            return (
               <a
-                href={s.href}
+                key={social.label}
+                href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-3 group"
+                className="
+                  inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl
+                  border border-line bg-bg-surface text-txt-secondary
+                  hover:border-accent/30 hover:text-txt hover:bg-bg-elevated
+                  transition-all duration-300 font-mono text-sm
+                  hover:shadow-[0_0_16px_rgba(0,229,255,0.05)]
+                "
+                style={{
+                  borderColor: "#161624",
+                  backgroundColor: "#0A0A12",
+                  color: "#8E8EA0",
+                }}
               >
-                <span className="text-text-muted group-hover:text-cyan transition-colors duration-300">
-                  {s.icon}
-                </span>
-                <div>
-                  <p className="text-sm text-text font-medium flex items-center gap-1 justify-center">
-                    {s.label}
-                    <ArrowUpRight
-                      size={11}
-                      className="opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    />
-                  </p>
-                  <p className="font-mono text-[10px] text-text-muted">
-                    {s.handle}
-                  </p>
-                </div>
+                <Icon size={15} />
+                {social.label}
               </a>
-            </GlowCard>
-          ))}
-        </div>
+            );
+          })}
+        </motion.div>
 
         {/* Achievements */}
-        <div className="contact-el">
-          <p className="font-mono text-[10px] text-text-muted uppercase tracking-[0.15em] mb-4">
-            Achievements
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
-            {achievements.map((a, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-2 text-sm text-text-secondary"
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+          className="flex flex-col items-center gap-3"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Trophy size={14} className="text-accent" style={{ color: "#00E5FF" }} />
+            <span
+              className="font-mono text-xs uppercase tracking-widest text-txt-muted"
+              style={{ color: "#5C5C6F" }}
+            >
+              Achievements
+            </span>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2">
+            {achievements.map((achievement) => (
+              <span
+                key={achievement}
+                className="
+                  inline-flex items-center px-3 py-1.5 rounded-full
+                  border border-line bg-bg-surface text-txt-secondary
+                  font-mono text-xs
+                "
+                style={{
+                  borderColor: "#161624",
+                  backgroundColor: "#0A0A12",
+                  color: "#8E8EA0",
+                }}
               >
-                <Trophy size={11} className="text-warning flex-shrink-0" />
-                <span>{a}</span>
-              </div>
+                {achievement}
+              </span>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
