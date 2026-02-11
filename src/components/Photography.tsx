@@ -77,7 +77,7 @@ export default function Photography() {
                     ease: "easeOut",
                   }}
                   className="group relative aspect-[3/4] rounded-2xl overflow-hidden border transition-all duration-500 hover:border-[var(--accent)]/30"
-                  style={{ borderColor: "#161624" }}
+                  style={{ borderColor: "var(--line)", transition: "border-color 1.5s ease" }}
                 >
                   <Image
                     src={photo.url}
@@ -122,8 +122,9 @@ export default function Photography() {
                   }}
                   className="aspect-[3/4] rounded-2xl border overflow-hidden flex items-center justify-center"
                   style={{
-                    borderColor: "#161624",
-                    backgroundColor: "#0A0A12",
+                    borderColor: "var(--line)",
+                    backgroundColor: "var(--bg-surface)",
+                    transition: "background-color 1.5s ease, border-color 1.5s ease",
                   }}
                 >
                   <Camera size={24} style={{ color: "#5C5C6F" }} />
@@ -156,9 +157,10 @@ export default function Photography() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 font-mono text-sm hover:shadow-[0_0_20px_rgba(var(--accent-rgb)/0.06)]"
             style={{
-              borderColor: "#161624",
-              backgroundColor: "#0A0A12",
+              borderColor: "var(--line)",
+              backgroundColor: "var(--bg-surface)",
               color: "#8E8EA0",
+              transition: "background-color 1.5s ease, border-color 1.5s ease",
             }}
           >
             Instagram

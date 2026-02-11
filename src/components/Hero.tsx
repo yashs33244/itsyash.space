@@ -60,20 +60,17 @@ export default function Hero() {
   const allLetters = [...nameTop];
   const allLettersBottom = [...nameBottom];
 
-  // Build a CSS gradient string that uses the dynamic accent
-  // The gradient sweeps across YASH SINGH as one unit
-  const isPlaying = track?.isPlaying && track?.accentColor;
   const accent = track?.accentColor || "#00E5FF";
 
-  // Lighten the accent color for a nice shimmer
-  const shimmerColor = useMemo(() => {
-    // Mix accent with white for a lighter variant
+  // Mix accent with white for a lighter tint to use in the text
+  const tintColor = useMemo(() => {
     const r = parseInt(accent.slice(1, 3), 16);
     const g = parseInt(accent.slice(3, 5), 16);
     const b = parseInt(accent.slice(5, 7), 16);
-    const lr = Math.min(255, r + Math.floor((255 - r) * 0.5));
-    const lg = Math.min(255, g + Math.floor((255 - g) * 0.5));
-    const lb = Math.min(255, b + Math.floor((255 - b) * 0.5));
+    // Blend 80% white + 20% accent for a subtle tint
+    const lr = Math.min(255, Math.round(237 * 0.8 + r * 0.2));
+    const lg = Math.min(255, Math.round(237 * 0.8 + g * 0.2));
+    const lb = Math.min(255, Math.round(240 * 0.8 + b * 0.2));
     return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
   }, [accent]);
 
@@ -95,33 +92,8 @@ export default function Hero() {
       <h1 className="sr-only">Yash Singh — Software Engineer</h1>
 
       <div className="relative z-10 flex flex-col items-center gap-0 px-4">
-        {/* Name Block */}
+        {/* Name Block — no animation, just subtle accent tint with smooth transition */}
         <div className="flex flex-col items-center select-none">
-          {/* Inject a dynamic style tag for the gradient animation */}
-          <style>{`
-            @keyframes hero-gradient-shift {
-              0%   { background-position: 0% 50%; }
-              50%  { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-            .hero-gradient-text {
-              background: linear-gradient(
-                90deg,
-                #EDEDF0 0%,
-                ${isPlaying ? shimmerColor : "#C0C0D0"} 25%,
-                ${isPlaying ? accent : "#8E8EA0"} 50%,
-                ${isPlaying ? shimmerColor : "#C0C0D0"} 75%,
-                #EDEDF0 100%
-              );
-              background-size: 300% 100%;
-              -webkit-background-clip: text;
-              background-clip: text;
-              color: transparent;
-              animation: hero-gradient-shift ${isPlaying ? "4s" : "8s"} ease infinite;
-              transition: background 1.5s ease;
-            }
-          `}</style>
-
           {/* YASH */}
           <div className="flex overflow-hidden" aria-hidden="true">
             {allLetters.map((char, i) => (
@@ -131,7 +103,11 @@ export default function Hero() {
                 variants={letterVariants}
                 initial="hidden"
                 animate="visible"
-                className="hero-gradient-text font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                style={{
+                  color: tintColor,
+                  transition: "color 2s ease",
+                }}
               >
                 {char}
               </motion.span>
@@ -150,7 +126,11 @@ export default function Hero() {
                 variants={letterVariants}
                 initial="hidden"
                 animate="visible"
-                className="hero-gradient-text font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
+                style={{
+                  color: tintColor,
+                  transition: "color 2s ease",
+                }}
               >
                 {char}
               </motion.span>
@@ -191,7 +171,7 @@ export default function Hero() {
         >
           <div
             className="flex-1 h-px"
-            style={{ backgroundColor: "#161624" }}
+            style={{ backgroundColor: "var(--line)" }}
           />
           <span className="relative flex h-2.5 w-2.5 ml-1">
             <span
@@ -218,9 +198,10 @@ export default function Hero() {
               key={badge}
               className="inline-flex items-center rounded-full border px-4 py-1.5 font-mono text-xs tracking-wider transition-all duration-500"
               style={{
-                borderColor: "#161624",
+                borderColor: "var(--line)",
                 color: "#8E8EA0",
-                backgroundColor: "rgba(10,10,18,0.6)",
+                backgroundColor: "var(--bg-surface)",
+                transition: "background-color 1.5s ease, border-color 1.5s ease",
               }}
             >
               {badge}

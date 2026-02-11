@@ -53,7 +53,7 @@ export default function GitHubGraph() {
 
   // Map contribution count to color intensity using the accent color
   const getCellColor = (count: number) => {
-    if (count === 0) return "#161624";
+    if (count === 0) return "var(--line)";
     const { r, g, b } = hexToRgb(accent);
     const levels = [0.15, 0.35, 0.55, 0.85];
     const level = count >= 10 ? 3 : count >= 5 ? 2 : count >= 2 ? 1 : 0;
@@ -88,7 +88,7 @@ export default function GitHubGraph() {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="card rounded-2xl border p-5 md:p-6 transition-all duration-500"
-      style={{ backgroundColor: "#0A0A12", borderColor: "#161624" }}
+      style={{ backgroundColor: "var(--bg-surface)", borderColor: "var(--line)", transition: "background-color 1.5s ease, border-color 1.5s ease" }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -198,7 +198,7 @@ export default function GitHubGraph() {
           <div
             className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[10px] font-mono whitespace-nowrap pointer-events-none z-20"
             style={{
-              backgroundColor: "#161624",
+              backgroundColor: "var(--line)",
               color: "#EDEDF0",
               border: `1px solid ${accent}33`,
             }}

@@ -101,9 +101,10 @@ export default function Skills() {
                       transition-all duration-300 cursor-default select-none
                     "
                     style={{
-                      borderColor: "rgba(22, 22, 36, 1)",
-                      backgroundColor: "rgba(10, 10, 18, 1)",
+                      borderColor: "var(--line)",
+                      backgroundColor: "var(--bg-surface)",
                       color: "#8E8EA0",
+                      transition: "background-color 1.5s ease, border-color 1.5s ease",
                     }}
                     whileHover={{
                       borderColor: "rgb(var(--accent-rgb) / 0.4)",
@@ -120,12 +121,12 @@ export default function Skills() {
 
         {/* Marquee Ticker */}
         <div className="relative overflow-hidden py-4 border-t border-b border-line"
-             style={{ borderColor: "#161624" }}>
+             style={{ borderColor: "var(--line)", transition: "border-color 1.5s ease" }}>
           {/* Fade edges */}
           <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-bg to-transparent pointer-events-none"
-               style={{ background: "linear-gradient(to right, #050508, transparent)" }} />
+               style={{ background: "linear-gradient(to right, var(--bg-base), transparent)" }} />
           <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-bg to-transparent pointer-events-none"
-               style={{ background: "linear-gradient(to left, #050508, transparent)" }} />
+               style={{ background: "linear-gradient(to left, var(--bg-base), transparent)" }} />
 
           <div className="flex animate-marquee whitespace-nowrap">
             {/* First copy */}

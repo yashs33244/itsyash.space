@@ -42,8 +42,9 @@ function GridCard({
       animate={inView ? "visible" : "hidden"}
       className={`card group rounded-2xl border p-5 md:p-6 transition-all duration-500 hover:border-[var(--accent)]/20 ${className}`}
       style={{
-        backgroundColor: "#0A0A12",
-        borderColor: "#161624",
+        backgroundColor: "var(--bg-surface)",
+        borderColor: "var(--line)",
+        transition: "background-color 1.5s ease, border-color 1.5s ease",
       }}
     >
       {children}
@@ -133,7 +134,7 @@ export default function About() {
             <div className="mt-6 flex items-center gap-2">
               <div
                 className="h-px flex-1 transition-colors duration-1000"
-                style={{ backgroundColor: "#161624" }}
+                style={{ backgroundColor: "var(--line)" }}
               />
               <span
                 className="font-mono text-[10px] transition-colors duration-1000"

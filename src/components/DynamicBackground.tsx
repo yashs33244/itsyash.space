@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useSpotify } from "@/context/SpotifyContext";
 import dynamic from "next/dynamic";
 
@@ -44,56 +44,48 @@ export default function DynamicBackground() {
         transition={{ duration: 1.5, ease: "easeInOut" }}
       />
 
-      {/* Mesh gradient layer: WebGL animated gradient from Spotify colors */}
-      <AnimatePresence>
-        {isPlaying && (
-          <motion.div
-            className="fixed inset-0 -z-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          >
-            <MeshGradientRenderer
-              options={{
-                colors: meshColors,
-                seed: 7,
-                animationSpeed: 0.3,
-                transition: true,
-                transitionDuration: 2000,
-              }}
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "absolute",
-                inset: 0,
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mesh gradient layer: ALWAYS visible
+          - When playing: slow animation (0.15 speed)
+          - When not playing: static (0 speed) with default colors */}
+      <div
+        className="fixed inset-0 -z-10"
+        style={{ opacity: 1 }}
+      >
+        <MeshGradientRenderer
+          options={{
+            colors: meshColors,
+            seed: 7,
+            animationSpeed: isPlaying ? 0.15 : 0,
+            transition: true,
+            transitionDuration: 2000,
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            inset: 0,
+          }}
+        />
+      </div>
 
-      {/* Ambient glow from accent color */}
-      <AnimatePresence>
-        {isPlaying && (
-          <motion.div
-            className="fixed -z-10 pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.35 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.5 }}
-            style={{
-              top: "0%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "120vw",
-              height: "70vh",
-              background: `radial-gradient(ellipse at center top, ${track.accentColor}22 0%, transparent 55%)`,
-              filter: "blur(80px)",
-            }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Ambient glow from accent color — only when playing */}
+      {isPlaying && (
+        <motion.div
+          className="fixed -z-10 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.35 }}
+          transition={{ duration: 1.5 }}
+          style={{
+            top: "0%",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "120vw",
+            height: "70vh",
+            background: `radial-gradient(ellipse at center top, ${track.accentColor}22 0%, transparent 55%)`,
+            filter: "blur(80px)",
+          }}
+        />
+      )}
 
       {/* Subtle noise/grid overlay */}
       <div

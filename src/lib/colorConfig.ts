@@ -49,6 +49,10 @@ export interface ThemePalette {
   bgBase: string;
   /** Elevated background — cards, surfaces with slight accent tint */
   bgElevated: string;
+  /** Surface background — card/div backgrounds, tinted toward accent */
+  bgSurface: string;
+  /** Line/border color — tinted toward accent */
+  line: string;
   /** 4 colors for the mesh gradient background [c1, c2, c3, c4] */
   meshColors: [string, string, string, string];
   /** Radial gradient string for the page background */
@@ -181,6 +185,8 @@ export function generateLocalPalette(
       accentMuted: "rgb(0 229 255 / 0.15)",
       bgBase: DEFAULTS.bgBase,
       bgElevated: DEFAULTS.bgElevated,
+      bgSurface: DEFAULTS.bgSurface,
+      line: DEFAULTS.line,
       meshColors: [...DEFAULT_MESH],
       backgroundGradient:
         "radial-gradient(ellipse at top, #0A0A1A 0%, #050508 50%, #020205 100%)",
@@ -191,12 +197,24 @@ export function generateLocalPalette(
   const accent = ensureVisibleOnDark(rawColor);
   const { r, g, b } = hexToRgb(accent);
 
+  // Surface: very dark but tinted toward accent
+  const surfaceR = Math.floor(r * 0.04 + 6);
+  const surfaceG = Math.floor(g * 0.04 + 6);
+  const surfaceB = Math.floor(b * 0.04 + 10);
+
+  // Line/border: slightly lighter, tinted toward accent
+  const lineR = Math.floor(r * 0.08 + 14);
+  const lineG = Math.floor(g * 0.08 + 14);
+  const lineB = Math.floor(b * 0.08 + 22);
+
   return {
     accent,
     accentRgb: `${r} ${g} ${b}`,
     accentMuted: `rgb(${r} ${g} ${b} / 0.15)`,
-    bgBase: `rgb(${Math.floor(r * 0.16)} ${Math.floor(g * 0.16)} ${Math.floor(b * 0.16)})`,
-    bgElevated: `rgb(${Math.floor(r * 0.28)} ${Math.floor(g * 0.28)} ${Math.floor(b * 0.28)})`,
+    bgBase: rgbToHex(Math.floor(r * 0.16), Math.floor(g * 0.16), Math.floor(b * 0.16)),
+    bgElevated: rgbToHex(Math.floor(r * 0.28), Math.floor(g * 0.28), Math.floor(b * 0.28)),
+    bgSurface: rgbToHex(surfaceR, surfaceG, surfaceB),
+    line: rgbToHex(lineR, lineG, lineB),
     meshColors: generateMeshColors(accent),
     backgroundGradient: generateGradient(accent),
   };
@@ -263,6 +281,8 @@ export function applyPaletteToDom(palette: ThemePalette): void {
   root.setProperty("--accent-rgb", palette.accentRgb);
   root.setProperty("--bg-base", palette.bgBase);
   root.setProperty("--bg-elevated", palette.bgElevated);
+  root.setProperty("--bg-surface", palette.bgSurface);
+  root.setProperty("--line", palette.line);
 }
 
 // ─── Gemini Integration ─────────────────────────────────────────
@@ -315,12 +335,22 @@ export async function fetchGeminiPalette(
 
     const { r, g, b } = hexToRgb(data.accent);
 
+    // Derive surface and line from accent
+    const surfaceR = Math.floor(r * 0.04 + 6);
+    const surfaceG = Math.floor(g * 0.04 + 6);
+    const surfaceB = Math.floor(b * 0.04 + 10);
+    const lineR = Math.floor(r * 0.08 + 14);
+    const lineG = Math.floor(g * 0.08 + 14);
+    const lineB = Math.floor(b * 0.08 + 22);
+
     return {
       accent: data.accent,
       accentRgb: `${r} ${g} ${b}`,
       accentMuted: data.accentMuted || `rgb(${r} ${g} ${b} / 0.15)`,
-      bgBase: data.bgBase || `rgb(${Math.floor(r * 0.16)} ${Math.floor(g * 0.16)} ${Math.floor(b * 0.16)})`,
-      bgElevated: data.bgElevated || `rgb(${Math.floor(r * 0.28)} ${Math.floor(g * 0.28)} ${Math.floor(b * 0.28)})`,
+      bgBase: data.bgBase || rgbToHex(Math.floor(r * 0.16), Math.floor(g * 0.16), Math.floor(b * 0.16)),
+      bgElevated: data.bgElevated || rgbToHex(Math.floor(r * 0.28), Math.floor(g * 0.28), Math.floor(b * 0.28)),
+      bgSurface: rgbToHex(surfaceR, surfaceG, surfaceB),
+      line: rgbToHex(lineR, lineG, lineB),
       meshColors: data.meshColors,
       backgroundGradient: generateGradient(data.accent),
     };

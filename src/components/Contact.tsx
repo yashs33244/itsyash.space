@@ -117,8 +117,9 @@ export default function Contact() {
               }
             `}
             style={{
-              borderColor: copied ? "rgb(var(--accent-rgb) / 0.5)" : "#161624",
-              backgroundColor: copied ? "rgb(var(--accent-rgb) / 0.1)" : "#0A0A12",
+              borderColor: copied ? "rgb(var(--accent-rgb) / 0.5)" : "var(--line)",
+              backgroundColor: copied ? "rgb(var(--accent-rgb) / 0.1)" : "var(--bg-surface)",
+              transition: "background-color 1.5s ease, border-color 0.3s ease",
               color: copied ? "var(--accent)" : "#8E8EA0",
             }}
           >
@@ -158,9 +159,10 @@ export default function Contact() {
                   transition-all duration-300 font-mono text-sm
                 "
                 style={{
-                  borderColor: "#161624",
-                  backgroundColor: "#0A0A12",
+                  borderColor: "var(--line)",
+                  backgroundColor: "var(--bg-surface)",
                   color: "#8E8EA0",
+                  transition: "background-color 1.5s ease, border-color 0.3s ease",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.borderColor = "rgb(var(--accent-rgb) / 0.3)";
@@ -168,7 +170,7 @@ export default function Contact() {
                   e.currentTarget.style.color = "#EDEDF0";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "#161624";
+                  e.currentTarget.style.borderColor = "var(--line)";
                   e.currentTarget.style.boxShadow = "none";
                   e.currentTarget.style.color = "#8E8EA0";
                 }}
@@ -207,9 +209,10 @@ export default function Contact() {
                   font-mono text-xs
                 "
                 style={{
-                  borderColor: "#161624",
-                  backgroundColor: "#0A0A12",
+                  borderColor: "var(--line)",
+                  backgroundColor: "var(--bg-surface)",
                   color: "#8E8EA0",
+                  transition: "background-color 1.5s ease, border-color 1.5s ease",
                 }}
               >
                 {achievement}

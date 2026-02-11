@@ -150,8 +150,8 @@ function TimelineEntry({
         <span
           className="relative z-10 h-3 w-3 rounded-full border-2 transition-all duration-1000"
           style={{
-            borderColor: index === 0 ? accent : "#161624",
-            backgroundColor: index === 0 ? accent : "#0A0A12",
+            borderColor: index === 0 ? accent : "var(--line)",
+            backgroundColor: index === 0 ? accent : "var(--bg-surface)",
             boxShadow:
               index === 0
                 ? `0 0 12px ${accent}66, 0 0 30px ${accent}26`
@@ -164,8 +164,9 @@ function TimelineEntry({
       <div
         className="card p-5 md:p-7 group transition-all duration-700"
         style={{
-          backgroundColor: "#0A0A12",
-          borderColor: isActive && index === 0 ? `${accent}20` : "#161624",
+          backgroundColor: "var(--bg-surface)",
+          borderColor: isActive && index === 0 ? `${accent}20` : "var(--line)",
+          transition: "background-color 1.5s ease, border-color 1.5s ease",
           boxShadow:
             isActive && index === 0
               ? `0 0 40px -15px ${accent}15, inset 0 1px 0 0 ${accent}08`

@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer
       className="border-t border-line"
-      style={{ borderColor: "#161624" }}
+      style={{ borderColor: "var(--line)", transition: "border-color 1.5s ease" }}
     >
       <div className="section-container py-8">
         {/* Top row */}

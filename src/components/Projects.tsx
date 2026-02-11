@@ -91,8 +91,9 @@ function ProjectCard({ project }: { project: Project }) {
       <div
         className="card group relative h-full p-6 md:p-8 flex flex-col justify-between transition-all duration-500"
         style={{
-          backgroundColor: "#0A0A12",
-          borderColor: "#161624",
+          backgroundColor: "var(--bg-surface)",
+          borderColor: "var(--line)",
+          transition: "background-color 1.5s ease, border-color 1.5s ease",
           minHeight: project.large ? "280px" : "240px",
         }}
         onMouseEnter={(e) => {
@@ -101,7 +102,7 @@ function ProjectCard({ project }: { project: Project }) {
             "0 0 30px rgb(var(--accent-rgb) / 0.04), 0 0 60px rgb(var(--accent-rgb) / 0.02)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "#161624";
+          e.currentTarget.style.borderColor = "var(--line)";
           e.currentTarget.style.boxShadow = "none";
         }}
       >
@@ -138,7 +139,7 @@ function ProjectCard({ project }: { project: Project }) {
               aria-label={`View ${project.title} on GitHub`}
               className="flex-shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg border transition-all duration-300 group/btn"
               style={{
-                borderColor: "#161624",
+                borderColor: "var(--line)",
                 backgroundColor: "rgba(10, 10, 18, 0.6)",
                 color: "#5C5C6F",
               }}
@@ -150,7 +151,7 @@ function ProjectCard({ project }: { project: Project }) {
                   "rgb(var(--accent-rgb) / 0.05)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "#161624";
+                e.currentTarget.style.borderColor = "var(--line)";
                 e.currentTarget.style.color = "#5C5C6F";
                 e.currentTarget.style.backgroundColor =
                   "rgba(10, 10, 18, 0.6)";

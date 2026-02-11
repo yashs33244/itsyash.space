@@ -46,27 +46,50 @@ export default function Navbar() {
   useEffect(() => {
     // Small delay to let sections mount
     const timer = setTimeout(() => {
-      const sectionIds = NAV_ITEMS.map((item) => item.href.slice(1));
+      // Only observe hash-based sections (not page links like /photography)
+      const sectionItems = NAV_ITEMS.filter(
+        (item) => item.href.startsWith("#")
+      );
+      const sectionIds = sectionItems.map((item) => item.href.slice(1));
       const sections = sectionIds
         .map((id) => document.getElementById(id))
         .filter(Boolean) as HTMLElement[];
 
       if (sections.length === 0) return;
 
+      // Track all visible sections and pick the one closest to viewport center
+      const visibleSections = new Map<string, number>();
+
       observerRef.current = new IntersectionObserver(
         (entries) => {
-          // Find the entry that is most visible
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              visibleSections.set(
+                entry.target.id,
+                entry.intersectionRatio
+              );
+            } else {
+              visibleSections.delete(entry.target.id);
+            }
+          });
 
-          if (visible.length > 0) {
-            setActiveSection(`#${visible[0].target.id}` as SectionId);
+          // Pick the section with the highest intersection ratio
+          let bestId = "";
+          let bestRatio = 0;
+          for (const [id, ratio] of visibleSections) {
+            if (ratio > bestRatio) {
+              bestRatio = ratio;
+              bestId = id;
+            }
+          }
+
+          if (bestId) {
+            setActiveSection(`#${bestId}` as SectionId);
           }
         },
         {
           rootMargin: "-20% 0px -60% 0px",
-          threshold: [0, 0.25, 0.5, 0.75, 1],
+          threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
         }
       );
 
@@ -372,7 +395,7 @@ export default function Navbar() {
                         borderColor:
                           index === NAV_ITEMS.length - 1
                             ? "transparent"
-                            : "#161624",
+                            : "var(--line)",
                       }}
                     >
                       {/* Section number */}
