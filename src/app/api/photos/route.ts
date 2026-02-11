@@ -99,24 +99,42 @@ function requireAuth(request: NextRequest) {
   return null;
 }
 
-async function streamToString(stream: ReadableStream | Blob | null) {
+async function streamToString(stream: any): Promise<string> {
   if (!stream) return "";
+  
+  // Handle Blob
   if (stream instanceof Blob) {
     return await stream.text();
   }
+  
+  // Handle web ReadableStream
+  if (typeof stream.getReader === 'function') {
+    const reader = stream.getReader();
+    const chunks: Uint8Array[] = [];
+    let done = false;
 
-  const reader = stream.getReader();
-  const chunks: Uint8Array[] = [];
-  let done = false;
-
-  while (!done) {
-    const result = await reader.read();
-    done = result.done;
-    if (result.value) {
-      chunks.push(result.value);
+    while (!done) {
+      const result = await reader.read();
+      done = result.done;
+      if (result.value) {
+        chunks.push(result.value);
+      }
     }
-  }
 
+    return new TextDecoder().decode(Buffer.concat(chunks));
+  }
+  
+  // Handle Node.js Readable stream (AWS SDK v3 in Node.js environment)
+  if (typeof stream.transformToString === 'function') {
+    return await stream.transformToString();
+  }
+  
+  // Fallback: try to read as async iterable
+  const chunks: Uint8Array[] = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+  
   return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
