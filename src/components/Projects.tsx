@@ -96,9 +96,9 @@ function ProjectCard({ project }: { project: Project }) {
           minHeight: project.large ? "280px" : "240px",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "rgba(0, 229, 255, 0.18)";
+          e.currentTarget.style.borderColor = "rgb(var(--accent-rgb) / 0.18)";
           e.currentTarget.style.boxShadow =
-            "0 0 30px rgba(0, 229, 255, 0.04), 0 0 60px rgba(0, 229, 255, 0.02)";
+            "0 0 30px rgb(var(--accent-rgb) / 0.04), 0 0 60px rgb(var(--accent-rgb) / 0.02)";
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.borderColor = "#161624";
@@ -108,7 +108,7 @@ function ProjectCard({ project }: { project: Project }) {
         {/* ── Number watermark ── */}
         <span
           className="absolute top-5 right-6 font-mono text-4xl md:text-5xl font-bold select-none pointer-events-none"
-          style={{ color: "rgba(0, 229, 255, 0.07)" }}
+          style={{ color: "rgb(var(--accent-rgb) / 0.07)" }}
           aria-hidden="true"
         >
           {project.number}
@@ -144,10 +144,10 @@ function ProjectCard({ project }: { project: Project }) {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor =
-                  "rgba(0, 229, 255, 0.3)";
-                e.currentTarget.style.color = "#00E5FF";
+                  "rgb(var(--accent-rgb) / 0.3)";
+                e.currentTarget.style.color = "var(--accent)";
                 e.currentTarget.style.backgroundColor =
-                  "rgba(0, 229, 255, 0.05)";
+                  "rgb(var(--accent-rgb) / 0.05)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "#161624";
@@ -179,11 +179,11 @@ function ProjectCard({ project }: { project: Project }) {
                 <span
                   key={tag}
                   className="rounded-full px-3 py-1 font-mono text-[11px] tracking-wide"
-                  style={{
-                    backgroundColor: "rgba(0, 229, 255, 0.05)",
-                    color: "rgba(0, 229, 255, 0.7)",
-                    border: "1px solid rgba(0, 229, 255, 0.08)",
-                  }}
+                    style={{
+                      backgroundColor: "rgb(var(--accent-rgb) / 0.05)",
+                      color: "rgb(var(--accent-rgb) / 0.7)",
+                      border: "1px solid rgb(var(--accent-rgb) / 0.08)",
+                    }}
                 >
                   {tag}
                 </span>
@@ -199,7 +199,7 @@ function ProjectCard({ project }: { project: Project }) {
               className="flex-shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               style={{ color: "#5C5C6F" }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.color = "#00E5FF")
+                (e.currentTarget.style.color = "var(--accent)")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.color = "#5C5C6F")
@@ -215,7 +215,7 @@ function ProjectCard({ project }: { project: Project }) {
           className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           style={{
             background:
-              "radial-gradient(ellipse 70% 60% at 30% 80%, rgba(0,229,255,0.03) 0%, transparent 70%)",
+              "radial-gradient(ellipse 70% 60% at 30% 80%, rgb(var(--accent-rgb) / 0.03) 0%, transparent 70%)",
           }}
         />
       </div>

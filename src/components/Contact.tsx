@@ -100,7 +100,7 @@ export default function Contact() {
               font-mono text-lg sm:text-xl md:text-2xl text-accent
               hover:text-glow transition-all duration-300
             "
-            style={{ color: "#00E5FF" }}
+            style={{ color: "var(--accent)" }}
           >
             {EMAIL}
           </a>
@@ -117,9 +117,9 @@ export default function Contact() {
               }
             `}
             style={{
-              borderColor: copied ? "rgba(0, 229, 255, 0.5)" : "#161624",
-              backgroundColor: copied ? "rgba(0, 229, 255, 0.1)" : "#0A0A12",
-              color: copied ? "#00E5FF" : "#8E8EA0",
+              borderColor: copied ? "rgb(var(--accent-rgb) / 0.5)" : "#161624",
+              backgroundColor: copied ? "rgb(var(--accent-rgb) / 0.1)" : "#0A0A12",
+              color: copied ? "var(--accent)" : "#8E8EA0",
             }}
           >
             {copied ? (
@@ -156,12 +156,21 @@ export default function Contact() {
                   border border-line bg-bg-surface text-txt-secondary
                   hover:border-accent/30 hover:text-txt hover:bg-bg-elevated
                   transition-all duration-300 font-mono text-sm
-                  hover:shadow-[0_0_16px_rgba(0,229,255,0.05)]
                 "
                 style={{
                   borderColor: "#161624",
                   backgroundColor: "#0A0A12",
                   color: "#8E8EA0",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgb(var(--accent-rgb) / 0.3)";
+                  e.currentTarget.style.boxShadow = "0 0 16px rgb(var(--accent-rgb) / 0.05)";
+                  e.currentTarget.style.color = "#EDEDF0";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#161624";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.color = "#8E8EA0";
                 }}
               >
                 <Icon size={15} />
@@ -179,7 +188,7 @@ export default function Contact() {
           className="flex flex-col items-center gap-3"
         >
           <div className="flex items-center gap-2 mb-2">
-            <Trophy size={14} className="text-accent" style={{ color: "#00E5FF" }} />
+            <Trophy size={14} style={{ color: "var(--accent)" }} />
             <span
               className="font-mono text-xs uppercase tracking-widest text-txt-muted"
               style={{ color: "#5C5C6F" }}

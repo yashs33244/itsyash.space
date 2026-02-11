@@ -246,7 +246,7 @@ export default function Navbar() {
                           damping: 28,
                         }}
                         className="absolute left-2 h-1 w-1 rounded-full bg-accent"
-                        style={{ backgroundColor: "#00E5FF" }}
+                        style={{ backgroundColor: "var(--accent)" }}
                         aria-hidden="true"
                       />
                     )}
@@ -396,7 +396,7 @@ export default function Navbar() {
                           }
                         `}
                         style={{
-                          backgroundColor: isActive ? "#00E5FF" : "transparent",
+                          backgroundColor: isActive ? "var(--accent)" : "transparent",
                         }}
                         aria-hidden="true"
                       />
@@ -459,7 +459,7 @@ export default function Navbar() {
                   className="h-px w-8 bg-accent/30"
                   style={{
                     background:
-                      "linear-gradient(90deg, rgba(0,229,255,0.3), transparent)",
+                      "linear-gradient(90deg, rgb(var(--accent-rgb) / 0.3), transparent)",
                   }}
                 />
                 <span

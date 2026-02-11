@@ -83,7 +83,6 @@ export default function Skills() {
               {/* Category Name */}
               <span
                 className="font-mono text-accent text-sm uppercase tracking-widest shrink-0 w-32"
-                style={{ color: "#00E5FF" }}
               >
                 {category.name}
               </span>
@@ -98,7 +97,7 @@ export default function Skills() {
                     className="
                       font-mono text-xs px-3 py-1.5 rounded-full
                       border border-line bg-bg-surface text-txt-secondary
-                      hover:border-accent/40 hover:text-txt hover:shadow-[0_0_12px_rgba(0,229,255,0.08)]
+                      hover:border-accent/40 hover:text-txt
                       transition-all duration-300 cursor-default select-none
                     "
                     style={{
@@ -107,7 +106,7 @@ export default function Skills() {
                       color: "#8E8EA0",
                     }}
                     whileHover={{
-                      borderColor: "rgba(0, 229, 255, 0.4)",
+                      borderColor: "rgb(var(--accent-rgb) / 0.4)",
                       color: "#EDEDF0",
                     }}
                   >
