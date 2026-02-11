@@ -45,6 +45,11 @@ interface PhotoPayload {
   settings: PhotoSettings;
   categories: string[]; // Dynamic categories
   updatedAt?: string;
+  debug?: {
+    error?: string;
+    bucket?: string;
+    key?: string;
+  };
 }
 
 function getR2Client() {
@@ -149,12 +154,23 @@ async function readPhotosFile(): Promise<PhotoPayload> {
   } catch (error) {
     console.error("[readPhotosFile] Error reading from R2:", error);
     console.error("[readPhotosFile] Bucket:", R2_BUCKET_NAME, "Key:", R2_METADATA_KEY);
+    console.error("[readPhotosFile] Error details:", {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      code: (error as any).Code,
+      statusCode: (error as any).$metadata?.httpStatusCode,
+    });
     
     // File doesn't exist yet - return empty structure
     return { 
       photos: [], 
       settings: {},
-      categories: ["landscape", "portrait", "street", "nature", "urban"]
+      categories: ["landscape", "portrait", "street", "nature", "urban"],
+      debug: {
+        error: error instanceof Error ? error.message : String(error),
+        bucket: R2_BUCKET_NAME,
+        key: R2_METADATA_KEY,
+      }
     };
   }
 }
@@ -189,8 +205,10 @@ async function writePhotosFile(data: PhotoPayload) {
 export async function GET() {
   try {
     const data = await readPhotosFile();
+    console.log("[GET /api/photos] Returning data:", { photoCount: data.photos?.length });
     return NextResponse.json(data);
   } catch (error) {
+    console.error("[GET /api/photos] Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to load photos" },
       { status: 500 }
