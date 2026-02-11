@@ -4,6 +4,8 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import SpotifyNowPlaying from "./SpotifyNowPlaying";
+import GitHubGraph from "./GitHubGraph";
+import { useSpotify } from "@/context/SpotifyContext";
 
 /* ── Animation helpers ── */
 const cardVariants = {
@@ -38,7 +40,7 @@ function GridCard({
       variants={cardVariants}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      className={`card group rounded-2xl border p-5 md:p-6 transition-colors duration-300 hover:border-[#00E5FF]/20 ${className}`}
+      className={`card group rounded-2xl border p-5 md:p-6 transition-all duration-500 hover:border-[var(--accent)]/20 ${className}`}
       style={{
         backgroundColor: "#0A0A12",
         borderColor: "#161624",
@@ -52,6 +54,8 @@ function GridCard({
 export default function About() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const { track } = useSpotify();
+  const accent = track?.accentColor || "#00E5FF";
 
   return (
     <section
@@ -60,7 +64,7 @@ export default function About() {
       className="section-py relative overflow-hidden"
     >
       <div className="section-container">
-        {/* ── Section Label ── */}
+        {/* Section Label */}
         <motion.div
           initial={{ opacity: 0, x: -16 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -69,9 +73,9 @@ export default function About() {
           <span className="section-label">About</span>
         </motion.div>
 
-        {/* ── Bento Grid ── */}
+        {/* Bento Grid */}
         <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-auto">
-          {/* ─── 1. Bio Card — spans 2 cols on desktop ─── */}
+          {/* 1. Bio Card */}
           <GridCard
             className="md:col-span-2 lg:col-span-2 lg:row-span-2 flex flex-col justify-between"
             index={0}
@@ -88,31 +92,51 @@ export default function About() {
                 className="font-body text-sm md:text-[15px] leading-relaxed md:leading-[1.75]"
                 style={{ color: "#8E8EA0" }}
               >
-                I&apos;m a 4th year CS student at IIIT Una, currently an SDE
-                intern at Binocs, Bangalore. I build production infrastructure
-                — microservices, CI/CD pipelines, Kubernetes clusters, and
+                I&apos;m a 4th year CS student at IIIT Una, currently pursuing
+                an internship at{" "}
+                <a
+                  href="https://binocs.co"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors duration-300 hover:underline underline-offset-4"
+                  style={{ color: accent }}
+                >
+                  Binocs.co
+                </a>
+                , Bangalore. I build production infrastructure that doesn&apos;t
+                fail — microservices, CI/CD pipelines, Kubernetes clusters, and
                 LLM-powered workflows.
               </p>
               <p
                 className="font-body text-sm md:text-[15px] leading-relaxed md:leading-[1.75] mt-4"
                 style={{ color: "#8E8EA0" }}
               >
-                Previously at ViewR (IIT Delhi startup) building real-time
-                video systems with sub-100ms latency, and at IIT Mandi as a
-                research assistant working on GNNs and Transformers. I care
-                about systems that work under pressure and code that reads
-                like prose.
+                Sure, you can use AI to build systems. But if you want{" "}
+                <span style={{ color: "#EDEDF0", fontWeight: 500 }}>
+                  production-grade systems
+                </span>{" "}
+                that handle real traffic, survive edge cases, and don&apos;t
+                crumble at 3 AM — you need someone who&apos;s built them. From
+                Kubernetes orchestration to real-time video pipelines with
+                sub-100ms latency, I ship things that work under pressure.
+              </p>
+              <p
+                className="font-body text-sm md:text-[15px] leading-relaxed md:leading-[1.75] mt-4"
+                style={{ color: "#8E8EA0" }}
+              >
+                When I&apos;m not writing code, I&apos;m behind a camera lens
+                — capturing the world one frame at a time.
               </p>
             </div>
 
-            {/* Decorative line at bottom of bio card */}
+            {/* Decorative line */}
             <div className="mt-6 flex items-center gap-2">
               <div
-                className="h-px flex-1"
+                className="h-px flex-1 transition-colors duration-1000"
                 style={{ backgroundColor: "#161624" }}
               />
               <span
-                className="font-mono text-[10px]"
+                className="font-mono text-[10px] transition-colors duration-1000"
                 style={{ color: "#5C5C6F" }}
               >
                 //
@@ -120,16 +144,26 @@ export default function About() {
             </div>
           </GridCard>
 
-          {/* ─── 2. Profile Photo Card ─── */}
+          {/* 2. Profile Photo Card */}
           <GridCard
             className="md:col-span-1 lg:col-span-2 flex items-center justify-center overflow-hidden"
             index={1}
             inView={isInView}
           >
-            <div className="relative w-full aspect-square max-w-[320px] rounded-xl overflow-hidden transition-shadow duration-500 group-hover:shadow-[0_0_40px_-12px_rgba(0,229,255,0.15)]">
-              {/* Cyan border glow on hover */}
+            <div
+              className="relative w-full aspect-square max-w-[320px] rounded-xl overflow-hidden transition-shadow duration-500"
+              style={{
+                boxShadow: `0 0 0px transparent`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = `0 0 40px -12px ${accent}26`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = `0 0 0px transparent`;
+              }}
+            >
               <div
-                className="absolute inset-0 rounded-xl border-2 border-transparent transition-colors duration-500 group-hover:border-[#00E5FF]/30 z-10 pointer-events-none"
+                className="absolute inset-0 rounded-xl border-2 border-transparent transition-all duration-500 group-hover:border-[var(--accent)]/30 z-10 pointer-events-none"
               />
               <Image
                 src="/images/yash-profile.png"
@@ -143,7 +177,7 @@ export default function About() {
             </div>
           </GridCard>
 
-          {/* ─── 3. Location Card ─── */}
+          {/* 3. Location Card */}
           <GridCard
             className="md:col-span-1 lg:col-span-1"
             index={2}
@@ -158,15 +192,15 @@ export default function About() {
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-2 w-2">
                 <span
-                  className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
+                  className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping transition-colors duration-1000"
                   style={{
-                    backgroundColor: "#00E5FF",
+                    backgroundColor: accent,
                     animationDuration: "2s",
                   }}
                 />
                 <span
-                  className="relative inline-flex rounded-full h-2 w-2"
-                  style={{ backgroundColor: "#00E5FF" }}
+                  className="relative inline-flex rounded-full h-2 w-2 transition-colors duration-1000"
+                  style={{ backgroundColor: accent }}
                 />
               </span>
               <span
@@ -178,7 +212,7 @@ export default function About() {
             </div>
           </GridCard>
 
-          {/* ─── 4. Education Card ─── */}
+          {/* 4. Education Card */}
           <GridCard
             className="md:col-span-1 lg:col-span-1"
             index={3}
@@ -204,8 +238,8 @@ export default function About() {
             </p>
             <div className="mt-3 flex items-center justify-between">
               <span
-                className="font-mono text-xs"
-                style={{ color: "#00E5FF" }}
+                className="font-mono text-xs transition-colors duration-500"
+                style={{ color: accent }}
               >
                 GPA 8.3/10
               </span>
@@ -218,7 +252,7 @@ export default function About() {
             </div>
           </GridCard>
 
-          {/* ─── 5. Currently Card ─── */}
+          {/* 5. Currently Card */}
           <GridCard
             className="md:col-span-1 lg:col-span-1"
             index={4}
@@ -265,7 +299,7 @@ export default function About() {
             </div>
           </GridCard>
 
-          {/* ─── 6. Spotify Card ─── */}
+          {/* 6. Spotify Card */}
           <GridCard
             className="md:col-span-1 lg:col-span-1"
             index={5}
@@ -279,6 +313,17 @@ export default function About() {
             </p>
             <SpotifyNowPlaying />
           </GridCard>
+
+          {/* 7. GitHub Contributions — full width */}
+          <motion.div
+            custom={6}
+            variants={cardVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            className="md:col-span-2 lg:col-span-4"
+          >
+            <GitHubGraph />
+          </motion.div>
         </div>
       </div>
     </section>

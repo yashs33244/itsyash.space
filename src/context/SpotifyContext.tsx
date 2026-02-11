@@ -22,9 +22,17 @@ interface SpotifyContextType {
   track: SpotifyTrack | null;
   setTrack: (track: SpotifyTrack) => void;
   backgroundGradient: string;
+  meshColors: [string, string, string, string];
 }
 
 const SpotifyContext = createContext<SpotifyContextType | undefined>(undefined);
+
+const DEFAULT_MESH: [string, string, string, string] = [
+  "#020818",
+  "#050a1a",
+  "#0a0e24",
+  "#02060f",
+];
 
 // Map common genres/artists to colors for when we can't extract from image
 const genreColorMap: Record<string, string> = {
@@ -54,69 +62,22 @@ const genreColorMap: Record<string, string> = {
 
 function getColorFromArtist(artist: string, title: string): string {
   const text = (artist + " " + title).toLowerCase();
-  
+
   for (const [genre, color] of Object.entries(genreColorMap)) {
     if (text.includes(genre)) {
       return color;
     }
   }
-  
+
   // Default to cyan if no match
   return "#00E5FF";
 }
 
-function generateGradient(baseColor: string, isPlaying: boolean): string {
-  if (!isPlaying) {
-    return "radial-gradient(ellipse at top, #0A0A1A 0%, #050508 50%, #020205 100%)";
-  }
-  
-  // Create a dark, moody gradient based on the track color
-  const r = parseInt(baseColor.slice(1, 3), 16);
-  const g = parseInt(baseColor.slice(3, 5), 16);
-  const b = parseInt(baseColor.slice(5, 7), 16);
-  
-  // Darken the colors for background
-  const darkR = Math.floor(r * 0.15);
-  const darkG = Math.floor(g * 0.15);
-  const darkB = Math.floor(b * 0.15);
-  
-  const midR = Math.floor(r * 0.08);
-  const midG = Math.floor(g * 0.08);
-  const midB = Math.floor(b * 0.08);
-  
-  return `radial-gradient(ellipse at top, rgb(${darkR}, ${darkG}, ${darkB}) 0%, rgb(${midR}, ${midG}, ${midB}) 40%, #050508 100%)`;
-}
-
-function setCssVar(name: string, value: string) {
-  if (typeof document === "undefined") return;
-  document.documentElement.style.setProperty(name, value);
-}
-
-function applyThemeFromColor(color: string, isPlaying: boolean) {
-  const r = parseInt(color.slice(1, 3), 16);
-  const g = parseInt(color.slice(3, 5), 16);
-  const b = parseInt(color.slice(5, 7), 16);
-
-  const darkR = Math.floor(r * 0.16);
-  const darkG = Math.floor(g * 0.16);
-  const darkB = Math.floor(b * 0.16);
-
-  const elevatedR = Math.floor(r * 0.28);
-  const elevatedG = Math.floor(g * 0.28);
-  const elevatedB = Math.floor(b * 0.28);
-
-  if (!isPlaying) {
-    setCssVar("--accent", "#00e5ff");
-    setCssVar("--accent-rgb", "0 229 255");
-    setCssVar("--bg-base", "#050508");
-    setCssVar("--bg-elevated", "#10101c");
-    return;
-  }
-
-  setCssVar("--accent", color.toLowerCase());
-  setCssVar("--accent-rgb", `${r} ${g} ${b}`);
-  setCssVar("--bg-base", `rgb(${darkR} ${darkG} ${darkB})`);
-  setCssVar("--bg-elevated", `rgb(${elevatedR} ${elevatedG} ${elevatedB})`);
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return { r, g, b };
 }
 
 function rgbToHex(r: number, g: number, b: number) {
@@ -124,7 +85,7 @@ function rgbToHex(r: number, g: number, b: number) {
     "#" +
     [r, g, b]
       .map((x) => {
-        const hex = x.toString(16);
+        const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
         return hex.length === 1 ? "0" + hex : hex;
       })
       .join("")
@@ -161,6 +122,91 @@ function rgbToHsl(r: number, g: number, b: number) {
   }
 
   return { h, s, l };
+}
+
+/**
+ * Generate a 4-color mesh palette from a base accent color.
+ * Returns very dark, moody variants for the background mesh.
+ */
+function generateMeshPalette(
+  baseColor: string,
+  isPlaying: boolean
+): [string, string, string, string] {
+  if (!isPlaying) return DEFAULT_MESH;
+
+  const { r, g, b } = hexToRgb(baseColor);
+
+  // Create 4 darkened + shifted variants for the mesh gradient
+  const c1 = rgbToHex(
+    Math.floor(r * 0.12),
+    Math.floor(g * 0.12),
+    Math.floor(b * 0.12)
+  );
+  const c2 = rgbToHex(
+    Math.floor(r * 0.08 + 5),
+    Math.floor(g * 0.06),
+    Math.floor(b * 0.15)
+  );
+  const c3 = rgbToHex(
+    Math.floor(r * 0.06),
+    Math.floor(g * 0.10 + 3),
+    Math.floor(b * 0.08)
+  );
+  const c4 = rgbToHex(
+    Math.floor(r * 0.04),
+    Math.floor(g * 0.04),
+    Math.floor(b * 0.06)
+  );
+
+  return [c1, c2, c3, c4];
+}
+
+function generateGradient(baseColor: string, isPlaying: boolean): string {
+  if (!isPlaying) {
+    return "radial-gradient(ellipse at top, #0A0A1A 0%, #050508 50%, #020205 100%)";
+  }
+
+  const { r, g, b } = hexToRgb(baseColor);
+
+  const darkR = Math.floor(r * 0.15);
+  const darkG = Math.floor(g * 0.15);
+  const darkB = Math.floor(b * 0.15);
+
+  const midR = Math.floor(r * 0.08);
+  const midG = Math.floor(g * 0.08);
+  const midB = Math.floor(b * 0.08);
+
+  return `radial-gradient(ellipse at top, rgb(${darkR}, ${darkG}, ${darkB}) 0%, rgb(${midR}, ${midG}, ${midB}) 40%, #050508 100%)`;
+}
+
+function setCssVar(name: string, value: string) {
+  if (typeof document === "undefined") return;
+  document.documentElement.style.setProperty(name, value);
+}
+
+function applyThemeFromColor(color: string, isPlaying: boolean) {
+  const { r, g, b } = hexToRgb(color);
+
+  const darkR = Math.floor(r * 0.16);
+  const darkG = Math.floor(g * 0.16);
+  const darkB = Math.floor(b * 0.16);
+
+  const elevatedR = Math.floor(r * 0.28);
+  const elevatedG = Math.floor(g * 0.28);
+  const elevatedB = Math.floor(b * 0.28);
+
+  if (!isPlaying) {
+    setCssVar("--accent", "#00e5ff");
+    setCssVar("--accent-rgb", "0 229 255");
+    setCssVar("--bg-base", "#050508");
+    setCssVar("--bg-elevated", "#10101c");
+    return;
+  }
+
+  setCssVar("--accent", color.toLowerCase());
+  setCssVar("--accent-rgb", `${r} ${g} ${b}`);
+  setCssVar("--bg-base", `rgb(${darkR} ${darkG} ${darkB})`);
+  setCssVar("--bg-elevated", `rgb(${elevatedR} ${elevatedG} ${elevatedB})`);
 }
 
 async function extractDominantColor(imageUrl: string): Promise<string | null> {
@@ -250,6 +296,8 @@ export function SpotifyProvider({ children }: { children: ReactNode }) {
   const [backgroundGradient, setBackgroundGradient] = useState(
     "radial-gradient(ellipse at top, #0A0A1A 0%, #050508 50%, #020205 100%)"
   );
+  const [meshColors, setMeshColors] =
+    useState<[string, string, string, string]>(DEFAULT_MESH);
   const requestIdRef = useRef(0);
 
   const setTrack = useCallback((newTrack: SpotifyTrack) => {
@@ -266,6 +314,7 @@ export function SpotifyProvider({ children }: { children: ReactNode }) {
 
     setTrackState(trackWithColor);
     setBackgroundGradient(generateGradient(baseColor, newTrack.isPlaying));
+    setMeshColors(generateMeshPalette(baseColor, newTrack.isPlaying));
     applyThemeFromColor(baseColor, newTrack.isPlaying);
 
     if (!newTrack.dominantColor && newTrack.isPlaying && newTrack.albumArt) {
@@ -282,6 +331,7 @@ export function SpotifyProvider({ children }: { children: ReactNode }) {
 
         setTrackState(updatedTrack);
         setBackgroundGradient(generateGradient(dominant, newTrack.isPlaying));
+        setMeshColors(generateMeshPalette(dominant, newTrack.isPlaying));
         applyThemeFromColor(dominant, newTrack.isPlaying);
       });
     }
@@ -289,7 +339,7 @@ export function SpotifyProvider({ children }: { children: ReactNode }) {
 
   return (
     <SpotifyContext.Provider
-      value={{ track, setTrack, backgroundGradient }}
+      value={{ track, setTrack, backgroundGradient, meshColors }}
     >
       {children}
     </SpotifyContext.Provider>

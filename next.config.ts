@@ -17,6 +17,10 @@ const remotePatterns = [
     protocol: "https",
     hostname: "**.r2.cloudflarestorage.com",
   },
+  {
+    protocol: "https",
+    hostname: "**.r2.dev",
+  },
 ] satisfies NonNullable<NextConfig["images"]>["remotePatterns"];
 
 if (process.env.R2_PUBLIC_HOSTNAME) {

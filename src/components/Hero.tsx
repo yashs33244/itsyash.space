@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSpotify } from "@/context/SpotifyContext";
 
 const taglines = [
-  "Building infrastructure that scales",
-  "Shipping production systems",
-  "From Kubernetes to pixel-perfect UIs",
+  "Engineer. Photographer. Problem Solver.",
+  "Building production systems that don't break",
+  "From Kubernetes clusters to pixel-perfect UIs",
 ];
 
 const nameTop = "YASH";
@@ -31,7 +32,11 @@ const fadeUp = {
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+    transition: {
+      delay,
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
   }),
 };
 
@@ -43,6 +48,8 @@ const badges = [
 
 export default function Hero() {
   const [taglineIndex, setTaglineIndex] = useState(0);
+  const { track } = useSpotify();
+  const [gradientAngle, setGradientAngle] = useState(135);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,6 +57,28 @@ export default function Hero() {
     }, 3200);
     return () => clearInterval(interval);
   }, []);
+
+  // Slowly rotate the gradient angle for a living feel
+  useEffect(() => {
+    let frame: number;
+    let start: number | null = null;
+    const animate = (ts: number) => {
+      if (!start) start = ts;
+      const elapsed = (ts - start) / 1000;
+      setGradientAngle(135 + Math.sin(elapsed * 0.3) * 45);
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const isPlaying = track?.isPlaying && track?.accentColor;
+  const accent = track?.accentColor || "#00E5FF";
+
+  // Generate gradient for the title text
+  const titleGradient = isPlaying
+    ? `linear-gradient(${gradientAngle}deg, #EDEDF0 0%, ${accent} 50%, #EDEDF0 100%)`
+    : `linear-gradient(${gradientAngle}deg, #EDEDF0 0%, #8E8EA0 50%, #EDEDF0 100%)`;
 
   const allLetters = [...nameTop];
   const allLettersBottom = [...nameBottom];
@@ -72,7 +101,7 @@ export default function Hero() {
       <h1 className="sr-only">Yash Singh — Software Engineer</h1>
 
       <div className="relative z-10 flex flex-col items-center gap-0 px-4">
-        {/* ── Name Block ── */}
+        {/* Name Block with animated gradient */}
         <div className="flex flex-col items-center select-none">
           {/* YASH */}
           <div className="flex overflow-hidden" aria-hidden="true">
@@ -84,7 +113,14 @@ export default function Hero() {
                 initial="hidden"
                 animate="visible"
                 className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
-                style={{ color: "#EDEDF0" }}
+                style={{
+                  background: titleGradient,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  backgroundSize: "200% 200%",
+                  transition: "background 1.5s ease",
+                }}
               >
                 {char}
               </motion.span>
@@ -92,7 +128,10 @@ export default function Hero() {
           </div>
 
           {/* SINGH */}
-          <div className="flex overflow-hidden -mt-2 md:-mt-4" aria-hidden="true">
+          <div
+            className="flex overflow-hidden -mt-2 md:-mt-4"
+            aria-hidden="true"
+          >
             {allLettersBottom.map((char, i) => (
               <motion.span
                 key={`bot-${i}`}
@@ -101,7 +140,14 @@ export default function Hero() {
                 initial="hidden"
                 animate="visible"
                 className="font-display font-bold tracking-[-0.04em] leading-[0.85] text-[clamp(5rem,15vw,13rem)]"
-                style={{ color: "#EDEDF0" }}
+                style={{
+                  background: titleGradient,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  backgroundSize: "200% 200%",
+                  transition: "background 1.5s ease",
+                }}
               >
                 {char}
               </motion.span>
@@ -109,7 +155,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Rotating Tagline ── */}
+        {/* Rotating Tagline */}
         <motion.div
           custom={1.4}
           variants={fadeUp}
@@ -132,7 +178,7 @@ export default function Hero() {
           </AnimatePresence>
         </motion.div>
 
-        {/* ── Horizontal Line with Pulsing Dot ── */}
+        {/* Horizontal Line with Pulsing Dot */}
         <motion.div
           custom={1.8}
           variants={fadeUp}
@@ -141,22 +187,22 @@ export default function Hero() {
           className="mt-10 md:mt-14 flex items-center gap-0 w-full max-w-xs md:max-w-md"
         >
           <div
-            className="flex-1 h-px"
+            className="flex-1 h-px transition-colors duration-1000"
             style={{ backgroundColor: "#161624" }}
           />
           <span className="relative flex h-2.5 w-2.5 ml-1">
             <span
-              className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping"
-              style={{ backgroundColor: "#00E5FF" }}
+              className="absolute inline-flex h-full w-full rounded-full opacity-60 animate-ping transition-colors duration-1000"
+              style={{ backgroundColor: accent }}
             />
             <span
-              className="relative inline-flex rounded-full h-2.5 w-2.5"
-              style={{ backgroundColor: "#00E5FF" }}
+              className="relative inline-flex rounded-full h-2.5 w-2.5 transition-colors duration-1000"
+              style={{ backgroundColor: accent }}
             />
           </span>
         </motion.div>
 
-        {/* ── Stat Badges ── */}
+        {/* Stat Badges */}
         <motion.div
           custom={2.2}
           variants={fadeUp}
@@ -167,7 +213,7 @@ export default function Hero() {
           {badges.map((badge) => (
             <span
               key={badge}
-              className="inline-flex items-center rounded-full border px-4 py-1.5 font-mono text-xs tracking-wider transition-colors duration-300 hover:border-accent/40"
+              className="inline-flex items-center rounded-full border px-4 py-1.5 font-mono text-xs tracking-wider transition-all duration-500 hover:border-[var(--accent)]/40"
               style={{
                 borderColor: "#161624",
                 color: "#8E8EA0",
@@ -180,7 +226,7 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* ── Scroll Indicator ── */}
+      {/* Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -200,7 +246,11 @@ export default function Hero() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{
+            duration: 1.6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
           <path
             d="M3 6L8 11L13 6"

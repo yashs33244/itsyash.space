@@ -1,11 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useSpotify } from "@/context/SpotifyContext";
+import dynamic from "next/dynamic";
+
+// Dynamically import MeshGradient to avoid SSR issues with WebGL
+const MeshGradientRenderer = dynamic(
+  () =>
+    import("@mesh-gradient/react").then((mod) => mod.MeshGradient),
+  { ssr: false }
+);
 
 export default function DynamicBackground() {
-  const { backgroundGradient, track } = useSpotify();
+  const { track, meshColors, backgroundGradient } = useSpotify();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,46 +32,77 @@ export default function DynamicBackground() {
     );
   }
 
+  const isPlaying = track?.isPlaying && track?.accentColor;
+
   return (
     <>
-      {/* Main gradient background */}
+      {/* Base layer: dark gradient fallback (always present) */}
       <motion.div
         className="fixed inset-0 -z-10"
         initial={false}
-        animate={{
-          background: backgroundGradient,
-        }}
+        animate={{ background: backgroundGradient }}
         transition={{ duration: 1.5, ease: "easeInOut" }}
       />
 
-      {/* Ambient glow effects */}
-      {track?.isPlaying && track?.accentColor && (
-      <motion.div
-        className="fixed -z-10 pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.5 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1 }}
-        style={{
-          top: "10%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "100vw",
-          height: "80vh",
-          background: `radial-gradient(ellipse at center, ${track.accentColor} 0%, transparent 60%)`,
-          filter: "blur(70px)",
-        }}
-      />
-      )}
+      {/* Mesh gradient layer: WebGL animated gradient from Spotify colors */}
+      <AnimatePresence>
+        {isPlaying && (
+          <motion.div
+            className="fixed inset-0 -z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2, ease: "easeInOut" }}
+          >
+            <MeshGradientRenderer
+              options={{
+                colors: meshColors,
+                seed: 7,
+                animationSpeed: 0.3,
+                transition: true,
+                transitionDuration: 2000,
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                inset: 0,
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Grid pattern overlay */}
+      {/* Ambient glow from accent color */}
+      <AnimatePresence>
+        {isPlaying && (
+          <motion.div
+            className="fixed -z-10 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.35 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5 }}
+            style={{
+              top: "0%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "120vw",
+              height: "70vh",
+              background: `radial-gradient(ellipse at center top, ${track.accentColor}22 0%, transparent 55%)`,
+              filter: "blur(80px)",
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Subtle noise/grid overlay */}
       <div
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
-          opacity: 0.05,
+          opacity: 0.04,
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+            linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
           `,
           backgroundSize: "100px 100px",
         }}

@@ -9,6 +9,7 @@ import {
   Play,
   Instagram,
 } from "lucide-react";
+import { useSpotify } from "@/context/SpotifyContext";
 
 /* ─── Data ───────────────────────────────────────── */
 
@@ -21,7 +22,11 @@ interface ExperienceEntry {
   active?: boolean;
   tech: string[];
   bullets: string[];
-  links?: { label: string; url: string; icon: "play" | "instagram" | "external" }[];
+  links?: {
+    label: string;
+    url: string;
+    icon: "play" | "instagram" | "external";
+  }[];
 }
 
 const experiences: ExperienceEntry[] = [
@@ -121,6 +126,10 @@ function TimelineEntry({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const { track } = useSpotify();
+
+  const accent = track?.accentColor || "#00E5FF";
+  const isActive = track?.isPlaying;
 
   return (
     <motion.div
@@ -130,68 +139,74 @@ function TimelineEntry({
       animate={isInView ? "visible" : "hidden"}
       className="relative pl-8 md:pl-12"
     >
-      {/* ── Timeline Node ── */}
+      {/* Timeline Node */}
       <div className="absolute left-0 top-2 flex items-center justify-center">
-        {/* Glow ring for active entry */}
         {entry.active && (
           <span
-            className="absolute h-5 w-5 rounded-full animate-ping"
-            style={{ backgroundColor: "rgba(0, 229, 255, 0.2)" }}
+            className="absolute h-5 w-5 rounded-full animate-ping transition-colors duration-1000"
+            style={{ backgroundColor: `${accent}33` }}
           />
         )}
         <span
-          className="relative z-10 h-3 w-3 rounded-full border-2"
+          className="relative z-10 h-3 w-3 rounded-full border-2 transition-all duration-1000"
           style={{
-            borderColor: index === 0 ? "#00E5FF" : "#161624",
-            backgroundColor: index === 0 ? "#00E5FF" : "#0A0A12",
+            borderColor: index === 0 ? accent : "#161624",
+            backgroundColor: index === 0 ? accent : "#0A0A12",
             boxShadow:
               index === 0
-                ? "0 0 12px rgba(0, 229, 255, 0.4), 0 0 30px rgba(0, 229, 255, 0.15)"
+                ? `0 0 12px ${accent}66, 0 0 30px ${accent}26`
                 : "none",
           }}
         />
       </div>
 
-      {/* ── Card ── */}
+      {/* Card */}
       <div
-        className="card p-5 md:p-7 group"
+        className="card p-5 md:p-7 group transition-all duration-700"
         style={{
           backgroundColor: "#0A0A12",
-          borderColor: "#161624",
+          borderColor: isActive && index === 0 ? `${accent}20` : "#161624",
+          boxShadow:
+            isActive && index === 0
+              ? `0 0 40px -15px ${accent}15, inset 0 1px 0 0 ${accent}08`
+              : "none",
         }}
       >
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
           <div className="flex-1">
-            {/* Role */}
             <h3
               className="font-display text-lg md:text-xl tracking-tight"
-              style={{ color: "#EDEDF0", lineHeight: 1.2, letterSpacing: "-0.02em", fontWeight: 700 }}
+              style={{
+                color: "#EDEDF0",
+                lineHeight: 1.2,
+                letterSpacing: "-0.02em",
+                fontWeight: 700,
+              }}
             >
               {entry.role}
             </h3>
 
-            {/* Company */}
             <div className="flex items-center gap-1.5 mt-1">
               {entry.companyUrl ? (
                 <a
                   href={entry.companyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 font-medium transition-colors duration-300 hover:underline underline-offset-4"
-                  style={{ color: "#00E5FF" }}
+                  className="inline-flex items-center gap-1 font-medium transition-colors duration-500 hover:underline underline-offset-4"
+                  style={{ color: accent }}
                 >
                   {entry.company}
                   <ExternalLink
                     size={13}
                     className="opacity-60"
-                    style={{ color: "#00E5FF" }}
+                    style={{ color: accent }}
                   />
                 </a>
               ) : (
                 <span
-                  className="font-medium"
-                  style={{ color: "#00E5FF" }}
+                  className="font-medium transition-colors duration-500"
+                  style={{ color: accent }}
                 >
                   {entry.company}
                 </span>
@@ -199,7 +214,6 @@ function TimelineEntry({
             </div>
           </div>
 
-          {/* Active Badge */}
           {entry.active && (
             <span
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] uppercase tracking-wider whitespace-nowrap self-start"
@@ -247,8 +261,8 @@ function TimelineEntry({
               style={{ color: "#8E8EA0" }}
             >
               <span
-                className="absolute left-0 top-[9px] h-1 w-1 rounded-full"
-                style={{ backgroundColor: "#00E5FF", opacity: 0.5 }}
+                className="absolute left-0 top-[9px] h-1 w-1 rounded-full transition-colors duration-500"
+                style={{ backgroundColor: accent, opacity: 0.5 }}
               />
               {bullet}
             </li>
@@ -260,11 +274,11 @@ function TimelineEntry({
           {entry.tech.map((tag) => (
             <span
               key={tag}
-              className="rounded-full px-3 py-1 font-mono text-[11px] tracking-wide transition-colors duration-300"
+              className="rounded-full px-3 py-1 font-mono text-[11px] tracking-wide transition-all duration-500"
               style={{
-                backgroundColor: "rgba(0, 229, 255, 0.05)",
-                color: "rgba(0, 229, 255, 0.7)",
-                border: "1px solid rgba(0, 229, 255, 0.08)",
+                backgroundColor: `${accent}0D`,
+                color: `${accent}B3`,
+                border: `1px solid ${accent}14`,
               }}
             >
               {tag}
@@ -289,7 +303,7 @@ function TimelineEntry({
                   className="inline-flex items-center gap-1.5 font-mono text-xs tracking-wide transition-all duration-300 hover:gap-2"
                   style={{ color: "#8E8EA0" }}
                   onMouseEnter={(e) =>
-                    (e.currentTarget.style.color = "#00E5FF")
+                    (e.currentTarget.style.color = accent)
                   }
                   onMouseLeave={(e) =>
                     (e.currentTarget.style.color = "#8E8EA0")
@@ -312,6 +326,8 @@ function TimelineEntry({
 export default function Experience() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const { track } = useSpotify();
+  const accent = track?.accentColor || "#00E5FF";
 
   return (
     <section
@@ -329,7 +345,7 @@ export default function Experience() {
       />
 
       <div className="section-container relative z-10">
-        {/* ── Section Header ── */}
+        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -345,14 +361,13 @@ export default function Experience() {
           </h2>
         </motion.div>
 
-        {/* ── Timeline ── */}
+        {/* Timeline */}
         <div className="relative">
-          {/* Vertical timeline line */}
+          {/* Vertical timeline line - now uses accent color */}
           <div
-            className="absolute left-[5px] md:left-[5px] top-0 bottom-0 w-px"
+            className="absolute left-[5px] md:left-[5px] top-0 bottom-0 w-px transition-all duration-1000"
             style={{
-              background:
-                "linear-gradient(to bottom, #00E5FF 0%, rgba(22, 22, 36, 0.8) 30%, rgba(22, 22, 36, 0.4) 70%, transparent 100%)",
+              background: `linear-gradient(to bottom, ${accent} 0%, ${accent}33 30%, ${accent}1A 70%, transparent 100%)`,
             }}
           />
 
@@ -364,7 +379,11 @@ export default function Experience() {
             className="flex flex-col gap-8 md:gap-10"
           >
             {experiences.map((entry, index) => (
-              <TimelineEntry key={entry.company} entry={entry} index={index} />
+              <TimelineEntry
+                key={entry.company}
+                entry={entry}
+                index={index}
+              />
             ))}
           </motion.div>
         </div>
