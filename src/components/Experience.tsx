@@ -318,14 +318,13 @@ export default function Experience() {
       id="experience"
       ref={sectionRef}
       className="relative section-py overflow-hidden"
-      style={{ backgroundColor: "#050508" }}
     >
       {/* Subtle radial wash */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 50% 40% at 20% 50%, rgba(0,229,255,0.02) 0%, transparent 70%)",
+            "radial-gradient(ellipse 50% 40% at 20% 50%, rgb(var(--accent-rgb) / 0.08) 0%, transparent 70%)",
         }}
       />
 

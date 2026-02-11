@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import sharp from "sharp";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,57 @@ interface SpotifyTrack {
 interface SpotifyNowPlayingResponse {
   is_playing: boolean;
   item: SpotifyTrack | null;
+}
+
+async function extractDominantColor(imageUrl: string): Promise<string | null> {
+  try {
+    const response = await fetch(imageUrl, { cache: "no-store" });
+    if (!response.ok) return null;
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    const { data, info } = await sharp(buffer)
+      .resize(32, 32, { fit: "inside" })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const { channels } = info;
+    if (channels < 3) return null;
+
+    let rSum = 0;
+    let gSum = 0;
+    let bSum = 0;
+    let count = 0;
+
+    for (let i = 0; i < data.length; i += channels) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+
+      rSum += r;
+      gSum += g;
+      bSum += b;
+      count += 1;
+    }
+
+    if (count === 0) return null;
+
+    const r = Math.round(rSum / count);
+    const g = Math.round(gSum / count);
+    const b = Math.round(bSum / count);
+
+    return (
+      "#" +
+      [r, g, b]
+        .map((x) => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? `0${hex}` : hex;
+        })
+        .join("")
+    );
+  } catch (error) {
+    console.error("Error extracting dominant color:", error);
+    return null;
+  }
 }
 
 async function getAccessToken(): Promise<string | null> {
@@ -130,10 +182,13 @@ export async function GET() {
     track.album.images[track.album.images.length - 1]?.url ||
     null;
 
+  const dominantColor = albumArt ? await extractDominantColor(albumArt) : null;
+
   return NextResponse.json({
     isPlaying: true,
     title: track.name,
     artist: track.artists.map((a) => a.name).join(", "),
     albumArt,
+    dominantColor,
   });
 }

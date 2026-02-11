@@ -58,7 +58,6 @@ export default function About() {
       id="about"
       ref={sectionRef}
       className="section-py relative overflow-hidden"
-      style={{ backgroundColor: "#050508" }}
     >
       <div className="section-container">
         {/* ── Section Label ── */}

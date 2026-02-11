@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { SpotifyProvider } from "@/context/SpotifyContext";
+import DynamicBackground from "@/components/DynamicBackground";
 
 /* ─── Fonts ──────────────────────────────────────── */
 
@@ -105,20 +107,24 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className="font-body bg-bg text-txt antialiased"
+        className="font-body text-txt antialiased"
         style={{
-          backgroundColor: "#050508",
           color: "#EDEDF0",
         }}
       >
-        {/* Noise overlay — sits above everything visually but passes through pointer events */}
-        <div className="noise" aria-hidden="true" />
+        <SpotifyProvider>
+          {/* Noise overlay — sits above everything visually but passes through pointer events */}
+          <div className="noise" aria-hidden="true" />
 
-        {/* Navigation */}
-        <Navbar />
+          {/* Dynamic background */}
+          <DynamicBackground />
 
-        {/* Main content */}
-        <main id="main-content">{children}</main>
+          {/* Navigation */}
+          <Navbar />
+
+          {/* Main content */}
+          <main id="main-content">{children}</main>
+        </SpotifyProvider>
       </body>
     </html>
   );

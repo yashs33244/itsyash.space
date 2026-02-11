@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test R2 Upload</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .container {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button {
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #00ccdd;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #0f0f0f;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #333;
+        }
+        .log div {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #00e5ff;
+            padding-left: 10px;
+        }
+        .error {
+            border-left-color: #ff4444 !important;
+            color: #ff6666;
+        }
+        .success {
+            border-left-color: #44ff44 !important;
+            color: #66ff66;
+        }
+        h1 {
+            color: #00e5ff;
+            margin-bottom: 10px;
+        }
+        .status {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test R2 Direct Upload (CORS)</h1>
+        <div class="status">This page tests if CORS is configured correctly for direct browser uploads to R2</div>
+        
+        <input type="file" id="fileInput" accept="image/*">
+        <button onclick="testUpload()" id="uploadBtn">Test Upload</button>
+        
+        <div class="log" id="log"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://itsyash.space';
+        const PASSWORD = 'Yesitsme@Ironman';
+        let token = null;
+
+        function log(message, type = 'info') {
+            const logEl = document.getElementById('log');
+            const div = document.createElement('div');
+            if (type === 'error') div.className = 'error';
+            if (type === 'success') div.className = 'success';
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.appendChild(div);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+
+        async function getToken() {
+            if (token) return token;
+            
+            log('🔐 Getting authentication token...');
+            
+            const response = await fetch(`${API_BASE}/api/auth/token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: PASSWORD }),
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to get token');
+            }
+
+            token = data.token;
+            log('✅ Got authentication token', 'success');
+            return token;
+        }
+
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file first');
+                return;
+            }
+
+            uploadBtn.disabled = true;
+            document.getElementById('log').innerHTML = '';
+
+            try {
+                log(`📁 Selected file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+
+                // Step 1: Get token
+                const authToken = await getToken();
+
+                // Step 2: Get presigned URL
+                log('📝 Requesting presigned URL from API...');
+                
+                const presignedResponse = await fetch(`${API_BASE}/api/upload/presigned`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-upload-token': authToken,
+                    },
+                    body: JSON.stringify({
+                        fileName: file.name,
+                        fileType: file.type,
+                    }),
+                });
+
+                const presignedData = await presignedResponse.json();
+
+                if (!presignedResponse.ok) {
+                    throw new Error(presignedData.error || 'Failed to get presigned URL');
+                }
+
+                log('✅ Got presigned URL', 'success');
+                log(`📍 Upload URL: ${presignedData.presignedUrl.substring(0, 100)}...`);
+
+                // Step 3: Upload to R2 using presigned URL
+                log('⬆️  Uploading file to R2...');
+                log('🔍 Testing CORS...');
+                
+                const uploadResponse = await fetch(presignedData.presignedUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': file.type,
+                    },
+                    body: file,
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error(`Upload failed with status: ${uploadResponse.status}`);
+                }
+
+                log('✅ ✅ ✅ Upload successful! CORS is working!', 'success');
+                log(`🌐 Public URL: ${presignedData.publicUrl}`, 'success');
+                log('🎉 You can now use the photo management system!', 'success');
+
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                
+                if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                    log('', 'error');
+                    log('💡 CORS Error Detected!', 'error');
+                    log('Please update R2 CORS configuration with:', 'error');
+                    log('"AllowedHeaders": ["*"]', 'error');
+                    log('"AllowedOrigins": ["https://itsyash.space"]', 'error');
+                    log('(remove the /* from the origin)', 'error');
+                }
+            } finally {
+                uploadBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

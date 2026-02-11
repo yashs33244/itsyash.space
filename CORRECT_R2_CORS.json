@@ -1,0 +1,23 @@
+[
+  {
+    "AllowedOrigins": [
+      "http://localhost:3000",
+      "https://itsyash.space"
+    ],
+    "AllowedMethods": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "HEAD"
+    ],
+    "AllowedHeaders": [
+      "*"
+    ],
+    "ExposeHeaders": [
+      "ETag",
+      "Content-Length"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]

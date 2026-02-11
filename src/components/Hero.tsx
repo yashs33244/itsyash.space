@@ -58,14 +58,13 @@ export default function Hero() {
     <section
       id="hero"
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-dot-grid"
-      style={{ backgroundColor: "#050508" }}
     >
       {/* Radial gradient overlay */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 60% 50% at 50% 45%, rgba(0,229,255,0.03) 0%, transparent 70%)",
+            "radial-gradient(ellipse 60% 50% at 50% 45%, rgb(var(--accent-rgb) / 0.12) 0%, transparent 70%)",
         }}
       />
 

@@ -234,14 +234,13 @@ export default function Projects() {
       id="projects"
       ref={sectionRef}
       className="relative section-py overflow-hidden"
-      style={{ backgroundColor: "#050508" }}
     >
       {/* Subtle radial wash */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 50% 40% at 80% 50%, rgba(123,97,255,0.02) 0%, transparent 70%)",
+            "radial-gradient(ellipse 50% 40% at 80% 50%, rgb(var(--accent-rgb) / 0.08) 0%, transparent 70%)",
         }}
       />
 

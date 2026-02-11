@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ─── Navigation Items ───────────────────────────── */
@@ -10,6 +12,7 @@ const NAV_ITEMS = [
   { label: "Experience", href: "#experience" },
   { label: "Projects", href: "#projects" },
   { label: "Skills", href: "#skills" },
+  { label: "Photography", href: "/photography", isPage: true },
   { label: "Contact", href: "#contact" },
 ] as const;
 
@@ -18,6 +21,8 @@ type SectionId = (typeof NAV_ITEMS)[number]["href"];
 /* ─── Navbar Component ───────────────────────────── */
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
@@ -102,7 +107,19 @@ export default function Navbar() {
   /* ── Smooth scroll handler ─────────────────── */
 
   const handleNavClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string, isPage?: boolean) => {
+      if (isPage || href.startsWith("/")) {
+        setMobileOpen(false);
+        return;
+      }
+
+      if (href.startsWith("#") && pathname !== "/") {
+        e.preventDefault();
+        router.push(`/${href}`);
+        setMobileOpen(false);
+        return;
+      }
+
       e.preventDefault();
       const target = document.querySelector(href);
       if (target) {
@@ -110,7 +127,7 @@ export default function Navbar() {
       }
       setMobileOpen(false);
     },
-    []
+    [pathname, router]
   );
 
   /* ── Animation variants ────────────────────── */
@@ -187,13 +204,16 @@ export default function Navbar() {
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-0.5">
             {NAV_ITEMS.map((item) => {
-              const isActive = activeSection === item.href;
+              const isPage = (item as { isPage?: boolean }).isPage;
+              const isActive = isPage
+                ? pathname === item.href
+                : activeSection === item.href;
 
               return (
-                <a
+                <Link
                   key={item.href}
                   href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
+                  onClick={(e) => handleNavClick(e, item.href, (item as {isPage?: boolean}).isPage)}
                   aria-label={`Navigate to ${item.label} section`}
                   aria-current={isActive ? "true" : undefined}
                   className={`
@@ -235,7 +255,7 @@ export default function Navbar() {
                   <span className={isActive ? "pl-1.5" : ""}>
                     {item.label}
                   </span>
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -321,7 +341,10 @@ export default function Navbar() {
               aria-label="Mobile navigation"
             >
               {NAV_ITEMS.map((item, index) => {
-                const isActive = activeSection === item.href;
+                const isPage = (item as { isPage?: boolean }).isPage;
+                const isActive = isPage
+                  ? pathname === item.href
+                  : activeSection === item.href;
 
                 return (
                   <motion.div
@@ -329,9 +352,9 @@ export default function Navbar() {
                     variants={itemVariants}
                     className="w-full"
                   >
-                    <a
+                    <Link
                       href={item.href}
-                      onClick={(e) => handleNavClick(e, item.href)}
+                      onClick={(e) => handleNavClick(e, item.href, (item as {isPage?: boolean}).isPage)}
                       aria-label={`Navigate to ${item.label} section`}
                       aria-current={isActive ? "true" : undefined}
                       className={`
@@ -421,7 +444,7 @@ export default function Navbar() {
                           />
                         </svg>
                       </motion.span>
-                    </a>
+                    </Link>
                   </motion.div>
                 );
               })}
