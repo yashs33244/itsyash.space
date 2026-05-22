@@ -13,7 +13,7 @@ export default function DeleteBlogButton({ slug, sha }: { slug: string; sha: str
       body: JSON.stringify({ slug, sha }),
     });
     if (res.ok) router.push("/blogs");
-    else alert("Delete failed — check your GITHUB_TOKEN env var.");
+    else alert("Delete failed — check your GH_TOKEN env var.");
   }
 
   return (
