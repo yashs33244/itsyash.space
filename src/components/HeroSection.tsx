@@ -96,7 +96,7 @@ export default function HeroSection() {
               lineHeight: 1.3,
             }}
           >
-            AI engineer. Full-stack. DevOps. A little design, photography, and marketing, all with Claude.
+            AI engineer. Full-stack. DevOps. A little design, photography, and marketing on the side.
           </h3>
 
           <div
