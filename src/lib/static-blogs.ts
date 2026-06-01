@@ -105,7 +105,7 @@ I'm an AI engineer, mostly. Comfortable across fullstack and infra, with some de
 
 Doxa is the project I'd most like to keep pushing on, Indian primary care has a real, painful, unsolved documentation problem and I think the loop we're prototyping has a shot. If that's a space you care about, or if you're hiring for serious AI work, I'd love to talk.
 
-prabal@orochiverse.com.`,
+Find me on [Twitter/X](https://twitter.com/yashs33244) or [LinkedIn](https://linkedin.com/in/yash-singh-bb1a1a212).`,
   },
   {
     slug: "y-brain-personal-claude-code-setup",
