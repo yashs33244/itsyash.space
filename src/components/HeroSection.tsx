@@ -63,10 +63,10 @@ export default function HeroSection() {
         style={{
           maxWidth: "1344px",
           margin: "0 auto",
-          padding: "110px 24px 48px",
+          padding: isMobile ? "88px 16px 32px" : "110px 24px 48px",
           display: "grid",
           gridTemplateColumns: isMobile ? "1fr" : "1fr auto",
-          gap: "48px",
+          gap: isMobile ? "24px" : "48px",
           alignItems: "flex-start",
         }}
       >
@@ -74,12 +74,12 @@ export default function HeroSection() {
           <h1
             style={{
               fontFamily: "var(--font-heading)",
-              fontSize: "40px",
+              fontSize: isMobile ? "32px" : "40px",
               fontWeight: 600,
               fontStyle: "italic",
               color: "#f0efe8",
-              lineHeight: "45px",
-              marginBottom: "24px",
+              lineHeight: 1.15,
+              marginBottom: "20px",
             }}
           >
             Hey, I am Yash
@@ -88,15 +88,15 @@ export default function HeroSection() {
           <h3
             style={{
               fontFamily: "var(--font-heading)",
-              fontSize: "24px",
+              fontSize: isMobile ? "19px" : "24px",
               fontWeight: 600,
               fontStyle: "italic",
               color: "#c8f000",
-              marginBottom: "24px",
-              lineHeight: "1.3",
+              marginBottom: "20px",
+              lineHeight: 1.3,
             }}
           >
-            AI, full-stack, and systems. always building.
+            AI engineer. Full-stack. DevOps. A little design, photography, and marketing, all with Claude.
           </h3>
 
           <div
@@ -107,55 +107,77 @@ export default function HeroSection() {
               marginBottom: "24px",
               color: "#f0efe8",
               maxWidth: "820px",
+              fontSize: isMobile ? "15px" : "16px",
             }}
           >
-            <p style={{ lineHeight: "1.7" }}>
-              I am an AI-fueled full-stack engineer passionate about building systems that scale and
-              ship fast. Currently, I am a Software Development Engineer at{" "}
+            <p style={{ lineHeight: 1.7 }}>
+              I build production AI systems end-to-end, from the prompt to the Kubernetes cluster
+              they run on. Just finished a 1-year onsite stint at{" "}
               <Link href="https://binocs.co" style={{ color: "#c8f000" }}>
                 Binocs
-              </Link>
-              , Bangalore, where I build production AI agents, automate workflows with LLMs, and ship
-              end-to-end features from infrastructure to UI. I reduced Claude API cost by 99% ($1.00 →
-              $0.01 per slide) by redesigning the AI presentation pipeline with prompt chaining and
-              structured outputs.
+              </Link>{" "}
+              in Bangalore where I shipped revenue-critical infra across AI/LLM platforms, CDD
+              product, infrastructure, and revenue ops. The details are in the experience section
+              below.
             </p>
 
-            <p style={{ lineHeight: "1.7" }}>
-              Previously, I was a Software Engineering Intern at{" "}
+            <p style={{ lineHeight: 1.7 }}>
+              Right now I&apos;m heads-down on{" "}
+              <Link href="https://doxa.itsyash.space" style={{ color: "#c8f000" }}>
+                Doxa
+              </Link>
+              , an AI scribe for doctors in India, plus a handful of personal projects I put up
+              in the days after Binocs: a multiplayer{" "}
+              <Link href="https://chess.itsyash.space" style={{ color: "#c8f000" }}>
+                chess platform
+              </Link>
+              , an{" "}
+              <Link href="https://outreach.itsyash.space" style={{ color: "#c8f000" }}>
+                AI outreach tool
+              </Link>
+              , a{" "}
+              <Link href="https://pilot.itsyash.space" style={{ color: "#c8f000" }}>
+                DevOps/SRE agent
+              </Link>
+              , a{" "}
+              <Link href="https://shots.itsyash.space" style={{ color: "#c8f000" }}>
+                photography portfolio
+              </Link>
+              , and{" "}
+              <Link href="https://finalcv.co" style={{ color: "#c8f000" }}>
+                finalcv.co
+              </Link>
+              , a resume maker.
+            </p>
+
+            <p style={{ lineHeight: 1.7 }}>
+              The thing that lets me do this volume of work is my{" "}
+              <strong style={{ color: "#c8f000" }}>y-brain</strong>, a personal Claude Code setup with
+              130+ skills, agents, and hooks, stitched together from the public configs of engineers
+              at Anthropic, Vercel, GStack, and Matt Pocock, plus my own glue. A single engineer with
+              this setup is a small team.
+            </p>
+
+            <p style={{ lineHeight: 1.7 }}>
+              Before Binocs I was a Software Engineering Intern at{" "}
               <Link href="https://viewr.in" style={{ color: "#c8f000" }}>
                 ViewR
-              </Link>
-              , where I built a cross-platform desktop app with Electron + React spanning 5
-              microservices, implemented real-time ONVIF/RTSP video streaming at sub-100ms latency,
-              and deployed 4 AI/ML models for attendance and face recognition reaching 98%+ accuracy on
-              10,000+ daily requests.
-            </p>
-
-            <p style={{ lineHeight: "1.7" }}>
-              I also did research at{" "}
+              </Link>{" "}
+              (Electron + 5 microservices, real-time ONVIF/RTSP, 4 face-recognition models at 98%+
+              accuracy on 10K+ daily requests), and did ML research at{" "}
               <Link href="https://iitmandi.ac.in" style={{ color: "#c8f000" }}>
                 IIT Mandi
-              </Link>
-              , improving continuous authentication accuracy for banking apps from 89% to 92%, and
-              analyzing molecular olfaction using Graph Neural Networks across 15,000+ pharmaceutical
-              compounds.
+              </Link>{" "}
+              on continuous authentication and molecular olfaction with GNNs.
             </p>
 
-            <p style={{ lineHeight: "1.7" }}>
-              I am a final-year B.Tech CS student at{" "}
+            <p style={{ lineHeight: 1.7 }}>
+              Final-year B.Tech CS at{" "}
               <Link href="https://iiitu.ac.in" style={{ color: "#c8f000" }}>
                 IIIT Una
               </Link>{" "}
-              (GPA 8.3/10, graduating July 2026). I keep building in public — follow along on my{" "}
-              <Link href="https://github.com/yashs33244" style={{ color: "#c8f000" }}>
-                GitHub
-              </Link>{" "}
-              and{" "}
-              <Link href="https://linkedin.com/in/yash-singh-bb1a1a212" style={{ color: "#c8f000" }}>
-                LinkedIn
-              </Link>
-              .
+              (GPA 8.3/10, graduating July 2026). I&apos;m looking for the next big AI thing to
+              build, hire me, or come help me build Doxa. Either works.
             </p>
           </div>
 
@@ -166,6 +188,7 @@ export default function HeroSection() {
               gap: "8px",
               listStyle: "none",
               padding: 0,
+              margin: 0,
             }}
           >
             {socialLinks.map((s) => (
@@ -180,10 +203,10 @@ export default function HeroSection() {
                     gap: "8px",
                     border: "1px solid #333",
                     borderRadius: "8px",
-                    padding: "7px 16px",
+                    padding: "7px 14px",
                     backgroundColor: "#0f0f0f",
                     color: "#f0efe8",
-                    fontSize: "15px",
+                    fontSize: "14px",
                     fontFamily: "var(--font-body)",
                     fontWeight: 500,
                     textDecoration: "none",
@@ -204,30 +227,41 @@ export default function HeroSection() {
           </ul>
         </div>
 
-        {/* Photo — on mobile it renders below text due to grid column order */}
+        {/* Photo, same frame, 20% zoom on the image inside it */}
         <div
           style={{
             flexShrink: 0,
             order: isMobile ? -1 : 0,
             display: "flex",
             justifyContent: isMobile ? "center" : "flex-end",
+            width: "100%",
           }}
         >
-          <Image
-            src="/images/yash.png"
-            alt="Yash Singh"
-            width={380}
-            height={400}
+          <div
             style={{
+              width: isMobile ? "240px" : "380px",
+              height: isMobile ? "260px" : "400px",
               borderRadius: "16px",
-              objectFit: "cover",
-              display: "block",
-              maxWidth: isMobile ? "260px" : "380px",
-              width: "100%",
-              height: "auto",
+              overflow: "hidden",
+              position: "relative",
             }}
-            priority
-          />
+          >
+            <Image
+              src="/images/yash.png"
+              alt="Yash Singh"
+              width={380}
+              height={400}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+                transform: "scale(1.2)",
+                transformOrigin: "center center",
+              }}
+              priority
+            />
+          </div>
         </div>
       </section>
 
@@ -235,10 +269,8 @@ export default function HeroSection() {
         style={{
           border: "none",
           borderTop: "1px solid #222",
-          margin: "0 24px",
+          margin: "0 auto",
           maxWidth: "1344px",
-          marginLeft: "auto",
-          marginRight: "auto",
         }}
       />
     </>
