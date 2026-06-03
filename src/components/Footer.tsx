@@ -23,8 +23,8 @@ const footerCols = [
   {
     heading: "Contact",
     links: [
-      { label: "LinkedIn", href: "https://linkedin.com/in/yash-singh-bb1a1a212" },
-      { label: "Twitter", href: "https://twitter.com/yashs33244" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/yashs3324" },
+      { label: "Twitter", href: "https://x.com/yash_s33244" },
       { label: "Email", href: "mailto:yashs3324@gmail.com" },
       { label: "GitHub", href: "https://github.com/yashs33244" },
     ],
@@ -125,7 +125,7 @@ export default function Footer() {
             Weekly essays on AI agents, full-stack systems, and what I&apos;m building.
           </p>
           <Link
-            href="https://linkedin.com/in/yash-singh-bb1a1a212"
+            href="https://www.linkedin.com/in/yashs3324"
             target="_blank"
             style={{
               ...SocialBtn,
@@ -159,8 +159,8 @@ export default function Footer() {
           <ul style={{ display: "flex", gap: "8px", listStyle: "none", flexWrap: "wrap" }}>
             {[
               { label: "GitHub", href: "https://github.com/yashs33244" },
-              { label: "LinkedIn", href: "https://linkedin.com/in/yash-singh-bb1a1a212" },
-              { label: "Twitter", href: "https://twitter.com/yashs33244" },
+              { label: "LinkedIn", href: "https://www.linkedin.com/in/yashs3324" },
+              { label: "Twitter", href: "https://x.com/yash_s33244" },
             ].map((s) => (
               <li key={s.label}>
                 <Link href={s.href} target="_blank" style={SocialBtn}>
