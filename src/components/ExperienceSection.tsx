@@ -89,7 +89,7 @@ export default function ExperienceSection() {
       style={{
         maxWidth: "1344px",
         margin: "0 auto",
-        padding: "0 24px 48px",
+        padding: "0 clamp(16px, 4vw, 24px) 48px",
       }}
     >
       <div style={{ borderTop: "1px solid #222", paddingTop: "32px" }}>
@@ -106,8 +106,9 @@ export default function ExperienceSection() {
                 backgroundColor: "#0f0f0f",
                 border: "1px solid #222",
                 borderRadius: "8px",
-                padding: "20px 24px",
+                padding: "20px clamp(16px, 4vw, 24px)",
                 marginBottom: "16px",
+                overflowWrap: "anywhere",
               }}
             >
               {/* Header row */}
@@ -153,7 +154,6 @@ export default function ExperienceSection() {
                     fontFamily: "monospace",
                     fontSize: "14px",
                     color: "#888",
-                    whiteSpace: "nowrap",
                   }}
                 >
                   {exp.duration} · {exp.location}

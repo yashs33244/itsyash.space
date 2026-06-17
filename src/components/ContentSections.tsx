@@ -161,7 +161,6 @@ function TagPill({ label }: { label: string }) {
         color: "#888",
         display: "inline-flex",
         alignItems: "center",
-        whiteSpace: "nowrap",
       }}
     >
       {label}
@@ -182,7 +181,6 @@ function SkillPill({ label }: { label: string }) {
         color: "#f0efe8",
         display: "inline-flex",
         alignItems: "center",
-        whiteSpace: "nowrap",
       }}
     >
       {label}
@@ -230,6 +228,7 @@ function ProjectCard({
           fontFamily: "var(--font-body)",
           margin: 0,
           lineHeight: 1.6,
+          overflowWrap: "anywhere",
         }}
       >
         {project.description}
@@ -244,7 +243,8 @@ function SkillRow({ label, skills }: { label: string; skills: string[] }) {
       style={{
         display: "flex",
         alignItems: "flex-start",
-        gap: "16px",
+        flexWrap: "wrap",
+        gap: "12px",
         paddingBottom: "12px",
       }}
     >
@@ -254,14 +254,13 @@ function SkillRow({ label, skills }: { label: string; skills: string[] }) {
           fontWeight: 600,
           color: "#888",
           fontFamily: "var(--font-body)",
-          minWidth: "140px",
+          minWidth: "120px",
           paddingTop: "3px",
-          flexShrink: 0,
         }}
       >
         {label}
       </span>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", flex: "1 1 200px" }}>
         {skills.map((s) => (
           <SkillPill key={s} label={s} />
         ))}
@@ -274,7 +273,7 @@ function SkillRow({ label, skills }: { label: string; skills: string[] }) {
 
 export default function ContentSections() {
   return (
-    <div style={{ maxWidth: "1344px", margin: "0 auto", padding: "0 24px 48px" }}>
+    <div style={{ maxWidth: "1344px", margin: "0 auto", padding: "0 clamp(16px, 4vw, 24px) 48px" }}>
       {/* Products section */}
       <div
         id="projects"
@@ -294,7 +293,7 @@ export default function ContentSections() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 380px), 1fr))",
             gap: "16px",
           }}
         >
