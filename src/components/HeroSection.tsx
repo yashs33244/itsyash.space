@@ -122,12 +122,16 @@ export default function HeroSection() {
             </p>
 
             <p style={{ lineHeight: 1.7 }}>
-              Right now I&apos;m heads-down on{" "}
-              <Link href="https://doxa.itsyash.space" style={{ color: "#c8f000" }}>
-                Doxa
+              Lately I&apos;ve been contributing to open source, with recent merges into{" "}
+              <Link href="https://github.com/mem0ai/mem0" style={{ color: "#c8f000" }}>
+                mem0
               </Link>
-              , an AI scribe for doctors in India, plus a handful of personal projects I put up
-              in the days after Binocs: a multiplayer{" "}
+              ,{" "}
+              <Link href="https://github.com/resend/react-email" style={{ color: "#c8f000" }}>
+                react-email
+              </Link>
+              , and a handful of other repos. Alongside that I&apos;m shipping personal projects
+              I put up in the days after Binocs: a multiplayer{" "}
               <Link href="https://chess.itsyash.space" style={{ color: "#c8f000" }}>
                 chess platform
               </Link>
@@ -177,7 +181,7 @@ export default function HeroSection() {
                 IIIT Una
               </Link>{" "}
               (GPA 8.3/10, graduating July 2026). I&apos;m looking for the next big AI thing to
-              build, hire me, or come help me build Doxa. Either works.
+              build, hire me or let&apos;s build something together.
             </p>
           </div>
 
